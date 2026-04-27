@@ -1,0 +1,377 @@
+---
+layout: null
+title: Tiantian Zhang
+permalink: /
+---
+<!doctype html>
+<html lang="{{ site.lang | default: 'en' }}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tiantian (Crystal) Zhang · Decision-Focused AI</title>
+    <meta name="description" content="Tiantian (Crystal) Zhang works on decision-focused learning, optimization, online learning, and LLM preference optimization.">
+    <link rel="stylesheet" href="{{ '/assets/css/tiantian-home.css' | relative_url }}">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="nav-wrap">
+        <a class="logo" href="{{ '/' | relative_url }}" aria-label="Tiantian Zhang homepage">
+          <span>Tiantian Zhang</span>
+          <span>Decision-Focused AI</span>
+        </a>
+        <nav class="nav-links" aria-label="Primary navigation">
+          <a class="active" href="{{ '/' | relative_url }}">about</a>
+          <a href="#selected-work">work</a>
+          <a href="#education">education</a>
+          <a href="#people">people</a>
+          <a href="{{ '/publications/' | relative_url }}">publications</a>
+          <a href="{{ '/talks/' | relative_url }}">talks</a>
+          <a href="{{ '/cv/' | relative_url }}">CV</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero" id="top" aria-labelledby="hero-title">
+        <div class="hero-inner">
+          <div class="kicker">Computer Science · Optimization · LLM Preference Learning</div>
+          <h1 id="hero-title">Tiantian <span class="tight">Zhang</span></h1>
+          <p class="hero-copy">
+            I study how learning systems should be trained when their predictions, reward scores, or rankings are used to make downstream decisions. My current work spans decision-focused learning, online learning theory, and LLM preference optimization.
+          </p>
+          <div class="hero-actions" aria-label="Homepage actions">
+            <a class="button primary" href="#selected-work">Selected work</a>
+            <a class="button secondary" href="{{ '/publications/' | relative_url }}">Publications</a>
+            <a class="button secondary" href="mailto:t.zhang8@columbia.edu">Contact</a>
+          </div>
+          <div class="scroll-note">Explore ↓</div>
+        </div>
+      </section>
+
+      <section class="section" id="about" aria-labelledby="about-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">About</p>
+            <h2 id="about-title">Decision-aware learning, from theory to deployed systems.</h2>
+          </div>
+          <p class="lead">
+            I am Tiantian (Crystal) Zhang. My training combines computer science, optimization, and financial engineering: I completed a B.A. in Computer Science through Columbia University’s dual degree program with City University of Hong Kong, and I will begin the M.S. in Financial Engineering program at Columbia Engineering / IEOR in Fall 2026.
+          </p>
+        </div>
+
+        <div class="grid two">
+          <article class="card profile-card">
+            <div class="portrait" aria-hidden="true">
+              <img src="{{ '/assets/img/image.png' | relative_url }}" alt="" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=&quot;avatar-fallback&quot;>TZ</span>';">
+            </div>
+            <div>
+              <p class="role">Tiantian (Crystal) Zhang</p>
+              <h3>Decision-focused AI, optimization, and LLM preference learning</h3>
+              <p>
+                I work on methods that connect prediction, ranking, optimization, and decision quality, with applications in LLM post-training, online learning, and financial decision systems.
+              </p>
+              <div class="badge-row" aria-label="Research interests">
+                <span class="badge">Decision-focused learning</span>
+                <span class="badge">LLM preference optimization</span>
+                <span class="badge">Online learning</span>
+                <span class="badge">Optimization</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="card">
+            <span class="number">01</span>
+            <h3>Research question</h3>
+            <p>
+              What should a learning objective optimize when the final goal is not prediction accuracy alone, but a downstream decision such as a route, portfolio, ranking, or policy distribution?
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="research" aria-labelledby="research-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Research</p>
+            <h2 id="research-title">Three threads I am building on.</h2>
+          </div>
+          <p class="lead">
+            My work moves between theoretical models, algorithm design, and empirical benchmarks where decision quality is the actual object of interest.
+          </p>
+        </div>
+
+        <div class="grid">
+          <article class="card">
+            <span class="number">01</span>
+            <h3>Decision-focused learning</h3>
+            <p>
+              Deep decision optimization and predict-then-optimize methods that train models with awareness of the downstream objective, including SPO/SPO+ style baselines and shortest-path or portfolio decision benchmarks.
+            </p>
+          </article>
+          <article class="card">
+            <span class="number">02</span>
+            <h3>LLM preference optimization</h3>
+            <p>
+              Reward-guided post-training methods that view each prompt as a finite decision problem over candidate responses, moving beyond purely pairwise fitting toward decision-distribution updates.
+            </p>
+          </article>
+          <article class="card">
+            <span class="number">03</span>
+            <h3>Online learning theory</h3>
+            <p>
+              Sleeping experts, rank-induced distributions, mirror descent, and sequential decision problems where availability, ranking, and uncertainty shape the learner’s regret.
+            </p>
+          </article>
+        </div>
+
+        <div class="mission-band">
+          <div>
+            <strong>Learning systems should be evaluated by the decisions they enable.</strong>
+            <p>
+              My goal is to connect mathematically grounded learning objectives with algorithms that remain useful in realistic, uncertain decision pipelines.
+            </p>
+          </div>
+          <div class="mission-mark" aria-hidden="true">∂</div>
+        </div>
+      </section>
+
+      <section class="section" id="selected-work" aria-labelledby="work-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Selected work</p>
+            <h2 id="work-title">Publications, working papers, and active projects.</h2>
+          </div>
+          <p class="lead">
+            I separate published / posted papers from ongoing drafts. For guidance-only relationships, the wording below intentionally says “instruction,” “technical guidance,” or “research conversations” rather than formal advising or collaboration.
+          </p>
+        </div>
+
+        <div class="work-list">
+          <article class="work-card featured">
+            <div class="work-topline">arXiv · 2026 · LLM preference optimization</div>
+            <h3>DDO-RM for LLM Preference Optimization: A Minimal Held-Out Benchmark against DPO</h3>
+            <p class="authors">Tiantian Zhang, Jierui Zuo, Wenping Wang</p>
+            <p>
+              A reward-guided decision-distribution approach for LLM preference optimization. The public benchmark is deliberately narrow and preliminary: it compares DDO-RM with DPO on a held-out preference split and frames scaling to larger candidate sets and stronger model families as the next step.
+            </p>
+            <div class="link-row">
+              <a class="text-link" href="https://arxiv.org/abs/2604.11119" target="_blank" rel="noopener">arXiv</a>
+              <a class="text-link" href="https://github.com/zuojr/ddorm-llm-preference-benchmark" target="_blank" rel="noopener">code</a>
+            </div>
+          </article>
+
+          <article class="work-card">
+            <div class="work-topline">arXiv · 2025 · online learning theory</div>
+            <h3>Rank-Induced PL Mirror Descent: A Rank-Faithful Second-Order Algorithm for Sleeping Experts</h3>
+            <p class="authors">Tiantian Zhang</p>
+            <p>
+              A rank-faithful mirror descent algorithm for sleeping experts under partial availability, using a rank-induced Plackett–Luce parameterization. This project grew from a Machine Learning Theory course project; I am grateful for Prof. Daniel Hsu’s instruction and feedback on the problem area.
+            </p>
+            <div class="link-row">
+              <a class="text-link" href="https://arxiv.org/abs/2509.18138" target="_blank" rel="noopener">arXiv</a>
+              <a class="text-link" href="https://arxiv.org/html/2509.18138v1" target="_blank" rel="noopener">HTML</a>
+            </div>
+          </article>
+
+          <article class="work-card">
+            <div class="work-topline">Ongoing · decision-focused optimization</div>
+            <h3>Deep Decision Optimization for Predict-then-Optimize</h3>
+            <p class="authors">Working manuscript and code</p>
+            <p>
+              An active DDO direction comparing decision-aware training updates with SPO/SPO+ style baselines on downstream optimization benchmarks. I am grateful for Prof. Adam Elmachtoub’s technical guidance on the SPO and decision-focused optimization direction.
+            </p>
+            <div class="link-row">
+              <a class="text-link" href="https://github.com/TiantianZ399/Deep-Decison-Optimize" target="_blank" rel="noopener">project code</a>
+              <span class="soft-label">manuscript in preparation</span>
+            </div>
+          </article>
+
+          <article class="work-card placeholder">
+            <div class="work-topline">Placeholder · internship research</div>
+            <h3>Dynamic Prediction + Decision Optimization for Portfolio Decisions</h3>
+            <p class="authors">Boke Technology · manuscript in preparation</p>
+            <p>
+              Placeholder for the dynamic prediction-to-decision project from the Boke Technology internship. The planned wording keeps it as an unpublished manuscript and leaves the arXiv / paper link empty until it is public.
+            </p>
+            <div class="link-row">
+              <span class="soft-label">arXiv link pending</span>
+            </div>
+          </article>
+
+          <article class="work-card">
+            <div class="work-topline">Independent study · discrete optimization</div>
+            <h3>Extension Complexity of the Stable-Set Polytope</h3>
+            <p class="authors">Advisor: Prof. Yuri Faenza</p>
+            <p>
+              A combinatorial optimization project studying extension-complexity lower bounds through polynomial and geometric methods over finite fields, connecting slack-matrix structure with communication-complexity style arguments.
+            </p>
+            <div class="link-row">
+              <span class="soft-label">manuscript in preparation</span>
+            </div>
+          </article>
+
+          <article class="work-card">
+            <div class="work-topline">Earlier research · robust and generative learning</div>
+            <h3>Causal DRO and Rectified Flow Models</h3>
+            <p class="authors">With Prof. Kede Ma and Prof. Qiang Liu</p>
+            <p>
+              Earlier projects studied causal constraints for robust generalization and rectified-flow ideas for generative learning and transport-based sampling.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="education" aria-labelledby="education-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Education</p>
+            <h2 id="education-title">Computer science, optimization, and financial engineering.</h2>
+          </div>
+          <p class="lead">
+            The homepage now foregrounds the education and coursework from the CV draft, rather than the inherited profile text that was still in the GitHub Pages fork.
+          </p>
+        </div>
+
+        <div class="timeline">
+          <article class="timeline-item card">
+            <div class="term">2026–2027</div>
+            <div>
+              <h3>Columbia University</h3>
+              <p><strong>Incoming M.S. in Financial Engineering</strong>, Columbia Engineering / IEOR.</p>
+            </div>
+          </article>
+          <article class="timeline-item card">
+            <div class="term">2021–2025</div>
+            <div>
+              <h3>Columbia University · City University of Hong Kong</h3>
+              <p><strong>B.A. in Computer Science</strong>, dual degree program with City University of Hong Kong. GPA: 4.00 / 4.00.</p>
+            </div>
+          </article>
+          <article class="timeline-item card">
+            <div class="term">Coursework</div>
+            <div>
+              <h3>Selected graduate-level and advanced coursework</h3>
+              <p>Convex Optimization, Statistical Learning, Advanced Algorithms, Theory of Large Language Models, Combinatorial Optimization, Reinforcement Learning in LLMs, and Machine Learning Theory.</p>
+            </div>
+          </article>
+          <article class="timeline-item card">
+            <div class="term">Honors</div>
+            <div>
+              <h3>Selected awards and honors</h3>
+              <p>Dean’s List, Computer Science Honor Society, Women in Computer Science, William Lowell Putnam Mathematical Competition top 25% in 2024, and Chinese Mathematics Competition first prize with full marks in 2017.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="experience" aria-labelledby="experience-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Experience</p>
+            <h2 id="experience-title">Industry research and applied decision systems.</h2>
+          </div>
+          <p class="lead">
+            I am interested in decision pipelines where prediction, uncertainty, and optimization must be designed together.
+          </p>
+        </div>
+
+        <div class="grid two">
+          <article class="card">
+            <span class="number">01</span>
+            <h3>Boke Technology · Quant Researcher Intern</h3>
+            <p>
+              Portfolio optimization research on dynamic prediction + decision systems, including multi-horizon prediction models and downstream mean–variance style objectives. The related manuscript is in preparation and should remain a placeholder until public.
+            </p>
+          </article>
+          <article class="card">
+            <span class="number">02</span>
+            <h3>Cantor Fitzgerald / BGC Group · ML Research Intern</h3>
+            <p>
+              Machine learning research for FX options, predictive analysis, and noisy market data workflows.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="people" aria-labelledby="people-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">People</p>
+            <h2 id="people-title">Collaborations, guidance, and research conversations.</h2>
+          </div>
+          <p class="lead">
+            This section uses intentionally precise wording. It distinguishes confirmed research collaborations from instruction, guidance, and informal research support.
+          </p>
+        </div>
+
+        <div class="grid two">
+          <article class="card">
+            <span class="number">C</span>
+            <h3>Research collaborations and project work</h3>
+            <p>
+              I have worked with Prof. Kede Ma, Prof. Qiang Liu, Yong Lin, and Prof. Yuri Faenza on projects spanning robust learning, generative learning, LLM / reward-model questions, and discrete optimization.
+            </p>
+          </article>
+          <article class="card">
+            <span class="number">G</span>
+            <h3>Guidance, instruction, and support</h3>
+            <p>
+              I am grateful for Prof. Daniel Hsu’s instruction and feedback on the sleeping-experts direction, Prof. Adam Elmachtoub’s technical guidance on SPO and decision-focused optimization, and research conversations and support from Prof. Xi Chen at NYU Stern on LLM-related questions.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="navigate" aria-labelledby="navigate-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Navigate</p>
+            <h2 id="navigate-title">A cleaner front door for the rest of the site.</h2>
+          </div>
+          <p class="lead">
+            The homepage keeps the academic site structure: publications, talks, CV, blog, and news.
+          </p>
+        </div>
+
+        <div class="grid">
+          <a class="card card-link" href="{{ '/publications/' | relative_url }}">
+            <span class="number">P</span>
+            <h3>Publications</h3>
+            <p>Posted papers, working papers, and bibliographic details.</p>
+          </a>
+          <a class="card card-link" href="{{ '/talks/' | relative_url }}">
+            <span class="number">T</span>
+            <h3>Talks</h3>
+            <p>Invited talks, seminar presentations, and research notes.</p>
+          </a>
+          <a class="card card-link" href="{{ '/cv/' | relative_url }}">
+            <span class="number">C</span>
+            <h3>CV</h3>
+            <p>Education, research experience, honors, skills, and activities.</p>
+          </a>
+        </div>
+      </section>
+
+      <section class="section" id="contact" aria-labelledby="contact-title">
+        <div class="callout">
+          <p class="eyebrow">Contact</p>
+          <h2 id="contact-title">Interested in decision-focused AI, LLM post-training, or optimization?</h2>
+          <p class="lead">
+            I am happy to connect about research ideas, seminar conversations, and project discussions.
+          </p>
+          <div class="link-row">
+            <a class="text-link" href="mailto:t.zhang8@columbia.edu">Email</a>
+            <a class="text-link" href="https://github.com/TiantianZ399" target="_blank" rel="noopener">GitHub</a>
+            <a class="text-link" href="https://www.linkedin.com/in/crystal-zhangg/" target="_blank" rel="noopener">LinkedIn</a>
+            <a class="text-link" href="{{ '/publications/' | relative_url }}">Research</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-wordmark">Tiantian Zhang</div>
+      <div>© {{ 'now' | date: '%Y' }} · Built with Jekyll and a custom academic homepage style.</div>
+    </footer>
+  </body>
+</html>
