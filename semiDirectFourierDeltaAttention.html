@@ -3,331 +3,430 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Beyond Memory Gating: Phase as a Missing Axis</title>
+  <title>SFDA: Phase as a Missing Axis</title>
+
   <script>
     window.MathJax = {
-      tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$','$$'], ['\\[','\\]']] },
-      svg: { fontCache: 'global' }
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']],
+        processEscapes: true
+      }
     };
   </script>
-  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
   <style>
-    :root {
-      --bg: #f7f7fb;
-      --paper: #ffffff;
-      --ink: #18181f;
-      --muted: #626270;
-      --border: #e6e6ef;
-      --accent: #4f46e5;
-      --accent-soft: #eef0ff;
-      --green: #0f766e;
-      --red: #b42318;
-      --code: #f4f4f7;
-      --shadow: 0 18px 45px rgba(20, 20, 40, 0.08);
-    }
-    * { box-sizing: border-box; }
     body {
       margin: 0;
-      background: radial-gradient(circle at top left, #eef0ff 0, #f7f7fb 34%, #fafafa 100%);
-      color: var(--ink);
-      font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      line-height: 1.62;
+      font-family: Georgia, "Times New Roman", serif;
+      background: #fbfaf7;
+      color: #171717;
+      line-height: 1.65;
     }
+
     .page {
-      max-width: 980px;
-      margin: 42px auto;
-      padding: 0 22px;
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 56px 28px 80px;
     }
-    article {
-      background: var(--paper);
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      box-shadow: var(--shadow);
-      overflow: hidden;
-    }
-    header {
-      padding: 46px 54px 28px;
-      border-bottom: 1px solid var(--border);
-      background: linear-gradient(135deg, #ffffff 0%, #f4f5ff 100%);
-    }
-    .eyebrow {
-      color: var(--accent);
-      font-weight: 700;
-      text-transform: uppercase;
-      font-size: 12px;
-      letter-spacing: .11em;
-      margin-bottom: 16px;
-    }
+
     h1 {
-      margin: 0;
-      font-size: clamp(30px, 5vw, 52px);
-      line-height: 1.05;
-      letter-spacing: -0.04em;
-      max-width: 840px;
+      font-size: 42px;
+      line-height: 1.12;
+      margin-bottom: 12px;
+      letter-spacing: -0.03em;
     }
+
     .subtitle {
-      margin-top: 18px;
-      color: var(--muted);
       font-size: 18px;
-      max-width: 760px;
+      color: #555;
+      margin-bottom: 36px;
     }
-    .abstract {
-      margin-top: 28px;
-      padding: 20px 22px;
-      background: rgba(255,255,255,0.75);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      font-size: 15px;
-    }
-    main { padding: 28px 54px 52px; }
-    nav.toc {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-      gap: 10px;
-      margin: 8px 0 34px;
-    }
-    nav.toc a {
-      text-decoration: none;
-      color: var(--ink);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 10px 12px;
-      background: #fff;
-      font-size: 14px;
-    }
-    nav.toc a:hover { border-color: var(--accent); background: var(--accent-soft); }
+
     h2 {
-      font-size: 27px;
-      margin: 42px 0 14px;
-      letter-spacing: -0.025em;
-      line-height: 1.2;
+      font-size: 25px;
+      margin-top: 46px;
+      border-top: 1px solid #ddd6ca;
+      padding-top: 24px;
+      letter-spacing: -0.01em;
     }
-    p { margin: 13px 0; }
-    .equation-card {
-      margin: 22px 0;
-      padding: 18px 18px;
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      background: #fbfbff;
-      overflow-x: auto;
+
+    p {
+      font-size: 17px;
+      margin: 15px 0;
     }
-    .callout {
-      margin: 22px 0;
-      padding: 18px 20px;
-      border-left: 4px solid var(--accent);
+
+    .abstract {
+      background: #fff;
+      border: 1px solid #e5ded2;
+      border-left: 5px solid #6c5ce7;
+      padding: 22px 26px;
+      border-radius: 10px;
+      margin-bottom: 34px;
+    }
+
+    .claim {
+      background: #f2f0ff;
+      border: 1px solid #d8d3ff;
+      padding: 18px 22px;
+      border-radius: 10px;
+      margin: 24px 0;
+      font-size: 17px;
+    }
+
+    .arch {
+      background: #ffffff;
+      border: 1px solid #e5ded2;
+      border-radius: 14px;
+      padding: 24px;
+      margin: 28px 0;
+    }
+
+    .arch-flow {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .box {
+      background: #faf8f3;
+      border: 1px solid #ddd6ca;
+      border-radius: 10px;
+      padding: 16px 18px;
+      text-align: center;
+      font-size: 16px;
+    }
+
+    .arrow {
+      text-align: center;
+      font-size: 22px;
+      color: #6c5ce7;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 20px;
+    }
+
+    .card {
+      background: #fff;
+      border: 1px solid #e5ded2;
       border-radius: 12px;
-      background: var(--accent-soft);
+      padding: 18px 20px;
     }
-    .verified { border-left-color: var(--green); background: #ecfdf5; }
-    .open { border-left-color: var(--red); background: #fff1f0; }
-    ul, ol { padding-left: 24px; }
-    li { margin: 6px 0; }
+
+    .card h3 {
+      margin-top: 0;
+      font-size: 18px;
+    }
+
+    ul, ol {
+      font-size: 17px;
+      padding-left: 24px;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
-      margin: 18px 0 8px;
-      font-size: 14px;
-    }
-    caption {
-      caption-side: top;
-      text-align: left;
-      color: var(--muted);
-      margin-bottom: 10px;
-      font-size: 13px;
-    }
-    th, td {
-      padding: 10px 12px;
-      border-bottom: 1px solid var(--border);
-      text-align: left;
-      vertical-align: top;
-    }
-    th {
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: .08em;
-      color: var(--muted);
-      background: #fafaff;
-    }
-    .number { font-variant-numeric: tabular-nums; }
-    .best { font-weight: 800; color: var(--accent); }
-    footer {
-      padding: 26px 54px;
-      border-top: 1px solid var(--border);
-      color: var(--muted);
-      font-size: 13px;
-      background: #fafafa;
-    }
-    .pillrow { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
-    .pill {
-      border: 1px solid var(--border);
+      margin: 24px 0;
       background: #fff;
-      border-radius: 999px;
-      padding: 5px 10px;
-      font-size: 12px;
-      color: var(--muted);
+      border: 1px solid #e5ded2;
+      border-radius: 10px;
+      overflow: hidden;
+      font-size: 15px;
     }
-    @media (max-width: 700px) {
-      header, main, footer { padding-left: 24px; padding-right: 24px; }
-      table { font-size: 12px; }
-      th, td { padding: 8px 7px; }
+
+    th, td {
+      padding: 12px 14px;
+      border-bottom: 1px solid #e5ded2;
+      text-align: center;
+    }
+
+    th {
+      background: #f4f0e8;
+      font-weight: 600;
+    }
+
+    td:first-child, th:first-child {
+      text-align: left;
+    }
+
+    .footer {
+      margin-top: 56px;
+      color: #777;
+      font-size: 14px;
+      border-top: 1px solid #ddd6ca;
+      padding-top: 20px;
+    }
+
+    @media (max-width: 760px) {
+      h1 {
+        font-size: 34px;
+      }
+      .two-col {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
+
 <body>
-  <div class="page">
-    <article>
-      <header>
-        <div class="eyebrow">SFDA technical memo</div>
-        <h1>Beyond Memory Gating:<br/>Phase as a Missing Axis in Linear-Attention State Transitions</h1>
-        <p class="subtitle">Author <a href="https://tiantianz399.github.io/preview.html">Tiantian ZHANG</a>Columbia University Department of Computer Science: why phase/rotation is a distinct design axis from gates, decay, and retention.</p>
-        <section class="abstract">
-          <strong>Abstract.</strong> Three years of linear-attention research have concentrated on the memory-write problem: what to store, how strongly, and how fast to forget. The gating literature is correspondingly mature. We argue that a second axis has been left almost untouched: the <em>spectrum of the state-transition operator</em> itself. Across this family the decay factor is typically a real, nonnegative diagonal, making the recurrence strictly contractive and confining its dynamics to a real spectrum. Such dynamics can compress, retrieve, and forget, but they cannot rotate. Rotation is what periodic, reversible, and modular state tracking require. Semidirect Fourier Delta Attention (SFDA) lifts that diagonal from $\mathbb{R}_{\ge 0}$ to a unit-modulus-scaled complex diagonal: a learnable phase, equivalently a block of $2\times2$ rotations, while preserving the chunkwise kernel path that makes the family efficient.
-        </section>
-        <div class="pillrow">
-          <span class="pill">Linear attention</span>
-          <span class="pill">KDA</span>
-          <span class="pill">Delta memory</span>
-          <span class="pill">Phase dynamics</span>
-          <span class="pill">Chunk-WY</span>
+  <main class="page">
+    <h1>Beyond Memory Gating:<br />Phase as a Missing Axis in Linear-Attention State Transitions</h1>
+    <p class="subtitle">
+<a href="https://tiantianz399.github.io/preview.html">Tiantian Zhang</a> ·
+Department of Computer Science, Columbia University<br>
+Exploring phase-augmented recurrent memory systems and the role of
+state-transition algebra in next-generation linear attention.
+</p>
+
+    <section class="abstract">
+      <p>
+        Three years of linear-attention research have largely concentrated on the memory-write problem:
+        what to store, how strongly, and how fast to forget. The gating literature, including RetNet,
+        RWKV, Mamba, DeltaNet, Gated DeltaNet, and KDA, is correspondingly mature.
+      </p>
+      <p>
+        We argue that a second axis has been left relatively underexplored:
+        the spectrum of the state-transition operator itself. Semidirect Fourier Delta Attention,
+        or SFDA, lifts real diagonal decay to complex or block-rotational phase decay while preserving
+        the chunkwise factorization path that makes KDA-style systems efficient.
+      </p>
+    </section>
+
+    <h2>1. The axis the field has not optimized</h2>
+
+    <p>
+      A linear-attention memory layer maintains a recurrent matrix state:
+    </p>
+
+    \[
+      S_t = A_t S_{t-1} + B_t .
+    \]
+
+    <p>
+      In KDA-style systems, the update can be written as
+    </p>
+
+    \[
+      S_t =
+      (I-\beta_t k_t k_t^\top)D_tS_{t-1}
+      +
+      \beta_t k_t v_t^\top .
+    \]
+
+    <p>
+      Here \(k_t\) is the write location, \(v_t\) is the content,
+      \(\beta_t\) is the write strength, and \(D_t\) is the retention or forgetting schedule.
+      Much of the recent field has focused on improving the gate:
+    </p>
+
+    \[
+      \beta_t .
+    \]
+
+    <div class="claim">
+      The central hypothesis of SFDA is that the next important degree of freedom is not only
+      <em>how much to write</em>, but <em>how memory evolves between writes</em>.
+    </div>
+
+    <h2>2. What real-spectrum memory cannot do</h2>
+
+    <p>
+      A real scalar decay \(\alpha \in [0,1]\) has no period. Products of such gates can shrink,
+      retain, or erase information, but they cannot naturally implement rotation. This matters for
+      modular counters, reversible dynamics, phase tracking, and semidirect-product automata.
+    </p>
+
+    <p>
+      These tasks require memory to move through state space, not merely accumulate or decay.
+      If a hybrid Transformer asks linear memory to replace many global-attention layers, then
+      the expressive ceiling of the linear transition becomes the system's ceiling.
+    </p>
+
+    <h2>3. SFDA: enrich the transition, keep the kernel</h2>
+
+    <p>
+      SFDA replaces the real diagonal decay \(D_t\) with a complex or block-rotational diagonal:
+    </p>
+
+    \[
+      A_t = (I-\beta_t k_t k_t^\top)\Lambda_t,
+      \qquad
+      \Lambda_t =
+      \operatorname{diag}\!\left(\alpha_{t,i}e^{i\theta_{t,i}}\right).
+    \]
+
+    <p>
+      Equivalently, in real coordinates:
+    </p>
+
+    \[
+      \Lambda_t
+      =
+      \bigoplus_i
+      \alpha_{t,i} R(\theta_{t,i}),
+      \qquad
+      R(\theta)
+      =
+      \begin{bmatrix}
+      \cos\theta & -\sin\theta\\
+      \sin\theta & \cos\theta
+      \end{bmatrix}.
+    \]
+
+    <p>
+      KDA is recovered when \(\theta_t=0\). Thus SFDA is a strict generalization of KDA,
+      not a separate architecture.
+    </p>
+
+    <h2>4. Architecture visualization</h2>
+
+    <section class="arch">
+      <p>
+        The intended Transformer block is hybrid: SFDA acts as a recurrent memory branch inside
+        the token-mixing path, while full attention can still be used periodically for precise
+        retrieval and global context integration.
+      </p>
+
+      <div class="arch-flow">
+        <div class="box">Input hidden states \(h_t\)</div>
+        <div class="arrow">↓</div>
+        <div class="box">Projection to \(k_t, v_t, \beta_t, \alpha_t, \theta_t\)</div>
+        <div class="arrow">↓</div>
+        <div class="box">
+          SFDA memory update:
+          \(S_t=(I-\beta_t k_t k_t^\top)\Lambda_tS_{t-1}+\beta_t k_t v_t^\top\)
         </div>
-      </header>
+        <div class="arrow">↓</div>
+        <div class="box">Readout from recurrent memory state</div>
+        <div class="arrow">↓</div>
+        <div class="box">Residual merge back into Transformer block</div>
+      </div>
 
-      <main>
-        <nav class="toc">
-          <a href="#axis">1. The missing axis</a>
-          <a href="#real-spectrum">2. Real-spectrum limits</a>
-          <a href="#sfda">3. SFDA</a>
-          <a href="#shown">4. What we have shown</a>
-          <a href="#questions">5. Falsifiable questions</a>
-          <a href="#framing">6. Why this framing</a>
-        </nav>
+      <div class="two-col">
+        <div class="card">
+          <h3>KDA-style memory</h3>
+          <p>
+            Learns what to write, where to write, and how much to forget.
+          </p>
+          \[
+            A_t=(I-\beta_t k_t k_t^\top)D_t
+          \]
+        </div>
 
-        <section id="axis">
-          <h2>1. The axis the field has not optimized</h2>
-          <p>A linear-attention layer maintains a matrix memory under an affine recurrence:</p>
-          <div class="equation-card">\[ S_t = A_t S_{t-1} + B_t . \]</div>
-          <p>The architectural design space is entirely in $A_t$ and $B_t$. In the KDA family,</p>
-          <div class="equation-card">
-            \[
-            S_t = (I-\beta_t k_t k_t^{*})D_tS_{t-1}+\beta_t k_t v_t^{*},
-            \qquad
-            A_t=(I-\beta_t k_t k_t^{*})D_t .
-            \]
-          </div>
-          <p>The components have clear roles: $k_t$ is the write location, $v_t$ the content, $\beta_t$ the write strength, and $D_t$ the retention/forgetting schedule. Most recent progress has gone into making the <em>write</em> better: learned gates, adaptive decay, selective updates, and data-dependent retention.</p>
-          <div class="callout">
-            <strong>Core claim.</strong> The field has heavily optimized the question <em>what should be remembered?</em> The less explored question is <em>how should memory evolve between writes?</em>
-          </div>
-          <p>The quantity that has not been explored is the eigenstructure of $A_t$ between writes. In this family, $D_t$ is usually a real, nonnegative diagonal. The delta term $I-\beta_t k_t k_t^{*}$ only removes a rank-one component. The state can accumulate, shrink, and be corrected, but it is structurally missing oscillatory modes.</p>
-        </section>
+        <div class="card">
+          <h3>SFDA memory</h3>
+          <p>
+            Adds a phase axis, allowing memory to rotate, cycle, and track structured state.
+          </p>
+          \[
+            A_t=(I-\beta_t k_t k_t^\top)\Lambda_t
+          \]
+        </div>
+      </div>
+    </section>
 
-        <section id="real-spectrum">
-          <h2>2. What real-spectrum memory cannot do</h2>
-          <p>A real scalar gate $\alpha\in[0,1]$ has no period. No product of such gates implements “advance a counter by one tick modulo $m$,” because that operation is a rotation by $2\pi/m$.</p>
-          <div class="equation-card">\[ \text{modular tick} \quad \Longleftrightarrow \quad e^{2\pi i/m}. \]</div>
-          <p>This is not a tuning issue. It is a property of the operator class. The affected computations include cyclic counters, parity-like modular structure, reversible dynamics, phase synchronization, and semidirect-product automata.</p>
-          <p>This matters more as linear layers cover more of the stack. If a hybrid model assigns most token mixers to linear memory, the expressivity ceiling of the linear transition becomes the system’s ceiling.</p>
-        </section>
+    <h2>5. What we have actually shown</h2>
 
-        <section id="sfda">
-          <h2>3. SFDA: enrich the transition, keep the kernel</h2>
-          <p>SFDA changes one thing: replace the real decay diagonal with a complex one.</p>
-          <div class="equation-card">
-            \[
-            A_t=(I-\beta_t k_t k_t^{*})\Lambda_t,
-            \qquad
-            \Lambda_t=\operatorname{diag}(\alpha_t\odot e^{i\theta_t})
-            =\bigoplus_i \alpha_{t,i}R(\theta_{t,i}).
-            \]
-          </div>
-          <p>Each channel now has a magnitude $\alpha_{t,i}$, corresponding to retention, and a phase $\theta_{t,i}$, corresponding to rotation. Setting $\theta_t\equiv0$ recovers KDA exactly.</p>
-          <p>The non-obvious constraint is kernel compatibility. A dense learned orthogonal control would add rotation but destroy the diagonal-plus-low-rank structure. A complex diagonal keeps every token transition in the form</p>
-          <div class="equation-card">\[ A_t=\Lambda_t-u_t r_t^{*}, \]</div>
-          <p>one phase-decay plus one rank-one correction. That is the design: the richest transition family we currently know how to keep inside the KDA-style factorization path.</p>
-        </section>
+    <p>
+      We separate verified algebra, demonstrated behavior, and open empirical claims.
+    </p>
 
-        <section id="shown">
-          <h2>4. What we have actually shown</h2>
-          <div class="callout verified">
-            <strong>Verified algebra.</strong> A from-scratch complex-coordinate implementation reproduces the exact claims against brute-force references: constructive chunk-WY product factorization, additive affine chunk-transfer law, KDA reduction at $\theta=0$, exact finite automaton realization including a non-permutation reset, and a contractivity bound under stated conditions.
-          </div>
-          <p>The phase counter of the cyclic-memory proposition is exact and norm-preserving over $5000$ steps, with residual around $10^{-13}$ in double precision.</p>
+    <h3>Verified algebra</h3>
+    <ul>
+      <li>Constructive chunk-WY product factorization.</li>
+      <li>Associative closure under structured composition.</li>
+      <li>Affine chunk-transfer law.</li>
+      <li>KDA reduction when \(\theta=0\).</li>
+      <li>Exact cyclic counter realization in the phase model.</li>
+      <li>Contractivity bound under standard assumptions.</li>
+    </ul>
 
-          <table>
-            <caption>Equal-capacity state tracking, train length $32$, final-quarter accuracy. KDA is SFDA with $\theta=0$; chance $=0.333$.</caption>
-            <thead>
-              <tr>
-                <th>Task</th>
-                <th>Model</th>
-                <th>$T=32$</th>
-                <th>$T=64$</th>
-                <th>$T=128$</th>
-                <th>$T=256$</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td rowspan="2">Cyclic counter $C_3$</td>
-                <td>SFDA</td>
-                <td class="number best">1.00</td>
-                <td class="number best">0.99</td>
-                <td class="number best">0.49</td>
-                <td class="number">0.34</td>
-              </tr>
-              <tr>
-                <td>KDA</td>
-                <td class="number">0.34</td>
-                <td class="number">0.33</td>
-                <td class="number">0.34</td>
-                <td class="number">0.34</td>
-              </tr>
-              <tr>
-                <td rowspan="2">Reset counter $C_3$</td>
-                <td>SFDA</td>
-                <td class="number best">1.00</td>
-                <td class="number best">1.00</td>
-                <td class="number best">1.00</td>
-                <td class="number best">1.00</td>
-              </tr>
-              <tr>
-                <td>KDA</td>
-                <td class="number">0.69</td>
-                <td class="number">0.68</td>
-                <td class="number">0.68</td>
-                <td class="number">0.68</td>
-              </tr>
-            </tbody>
-          </table>
+    <h3>Minimal synthetic separation</h3>
 
-          <div class="callout open">
-            <strong>Not yet claimed.</strong> The unbounded counter drifts at the longest lengths in finite precision; a harder reversible dihedral task is not solved at this scale; and this evidence does not yet address language modeling, throughput, or long-context quality.
-          </div>
-        </section>
+    <p>
+      On modular state tracking, the zero-phase KDA reduction cannot represent the cyclic transition,
+      while SFDA can.
+    </p>
 
-        <section id="questions">
-          <h2>5. The falsifiable questions</h2>
-          <ol>
-            <li>Does richer transition algebra improve language-model quality at equal compute?</li>
-            <li>Does it improve long-context retrieval where periodic or positional structure is present?</li>
-            <li>Can a hybrid carry a higher linear-to-global ratio, such as $7{:}1$ or $15{:}1$, at the quality of a KDA-style $3{:}1$?</li>
-            <li>Does it maintain KDA-level kernel efficiency?</li>
-          </ol>
-        </section>
+    <table>
+      <thead>
+        <tr>
+          <th>Task</th>
+          <th>Model</th>
+          <th>\(T=32\)</th>
+          <th>\(T=64\)</th>
+          <th>\(T=128\)</th>
+          <th>\(T=256\)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Cyclic counter \(C_3\)</td>
+          <td>SFDA</td>
+          <td><strong>1.00</strong></td>
+          <td><strong>0.99</strong></td>
+          <td><strong>0.49</strong></td>
+          <td>0.34</td>
+        </tr>
+        <tr>
+          <td>Cyclic counter \(C_3\)</td>
+          <td>KDA</td>
+          <td>0.34</td>
+          <td>0.33</td>
+          <td>0.34</td>
+          <td>0.34</td>
+        </tr>
+        <tr>
+          <td>Reset counter \(C_3\)</td>
+          <td>SFDA</td>
+          <td><strong>1.00</strong></td>
+          <td><strong>1.00</strong></td>
+          <td><strong>1.00</strong></td>
+          <td><strong>1.00</strong></td>
+        </tr>
+        <tr>
+          <td>Reset counter \(C_3\)</td>
+          <td>KDA</td>
+          <td>0.69</td>
+          <td>0.68</td>
+          <td>0.68</td>
+          <td>0.68</td>
+        </tr>
+      </tbody>
+    </table>
 
-        <section id="framing">
-          <h2>6. Why this framing</h2>
-          <p>The argument is not that gating was a mistake. Gating produced most of the practical gains in linear attention. The argument is that the gating axis is approaching diminishing returns, while a second axis, the spectrum of the state-transition operator, has mostly remained fixed at the real, contractive case.</p>
-          <div class="callout">
-            <strong>SFDA in one line.</strong> Add a phase, keep the kernel, recover KDA for free.
-          </div>
-          <p>The verified algebra and the clean representational separation on modular tasks are evidence that the axis is real. Whether it pays off at scale is the experiment worth running.</p>
-        </section>
-      </main>
+    <h2>6. The falsifiable questions</h2>
 
-      <footer>
-        HTML technical memo generated from the LaTeX note. Math rendering uses MathJax; the page can be hosted as a static file.
-      </footer>
-    </article>
-  </div>
+    <ol>
+      <li>Does richer transition algebra improve language-model quality at equal compute?</li>
+      <li>Does it improve long-context retrieval where periodic or positional structure matters?</li>
+      <li>Can it support higher linear-to-global ratios, such as \(7{:}1\) or \(15{:}1\)?</li>
+      <li>Can it preserve KDA-level kernel efficiency?</li>
+    </ol>
+
+    <h2>7. Why this framing matters</h2>
+
+    <p>
+      The claim is not that gating was a mistake. Gating has produced most practical gains
+      in linear attention so far. The claim is that the gating axis may now be reaching
+      diminishing returns, while the spectrum of the state-transition operator has remained
+      mostly fixed at the real, contractive case.
+    </p>
+
+    <div class="claim">
+      SFDA is a minimal step along a new axis:
+      add phase, keep the kernel, recover KDA as a special case.
+    </div>
+
+    <div class="footer">
+      Draft technical memo. Intended for research discussion, not as a final paper claim.
+    </div>
+  </main>
 </body>
 </html>
