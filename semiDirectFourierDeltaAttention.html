@@ -198,6 +198,65 @@
       </p>
     </section>
 
+    <section class="note-section">
+      <h2>Connection to State Tracking in Transformers</h2>
+    
+      <p>
+        A recent DeepMind paper,
+        <em>The Topological Trouble With Transformers</em>, argues that purely
+        feedforward Transformer architectures face a structural difficulty with
+        dynamic state tracking. The core issue is not simply context length: the
+        model may retrieve past text, but maintaining an evolving latent state
+        across many updates is a different computational problem.
+      </p>
+    
+      <p>
+        This perspective is closely aligned with the motivation for SFDA. Current
+        linear-attention and delta-memory systems already introduce recurrence:
+      </p>
+    
+      <div class="math-block">
+        \[
+          S_t=A_tS_{t-1}+B_t.
+        \]
+      </div>
+    
+      <p>
+        However, in KDA-style systems the transition operator is still largely
+        contractive:
+      </p>
+    
+      <div class="math-block">
+        \[
+          A_t=(I-\beta_t k_tk_t^\top)D_t.
+        \]
+      </div>
+    
+      <p>
+        This gives the model a mechanism for writing, erasing, and forgetting, but
+        it does not naturally provide oscillatory or reversible state evolution.
+        SFDA asks whether the next bottleneck is not recurrence itself, but the
+        algebra of the recurrent transition.
+      </p>
+    
+      <div class="math-block">
+        \[
+          A_t=(I-\beta_t k_tk_t^\top)\Lambda_t,
+          \qquad
+          \Lambda_t=\operatorname{diag}(\alpha_t e^{i\theta_t}).
+        \]
+      </div>
+    
+      <p>
+        Under this view, SFDA is one possible response to the state-tracking
+        problem: keep the efficiency of KDA-style recurrent memory, but enrich the
+        internal transition dynamics so the state can rotate, cycle, and represent
+        structured automata rather than only decay.
+      </p>
+    </section>
+
+
+
     <h2>1. The axis the field has not optimized</h2>
 
     <p>
