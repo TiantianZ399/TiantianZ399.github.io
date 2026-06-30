@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Beyond Automating Proof: Data Distributions, Trajectory Rollouts, Creative Proposals, and Certificates</title>
+  <meta name="description" content="An academic research note on LLM-assisted mathematical discovery, scaling laws, trajectory rollouts, creative proposal distributions, verifier-induced selection, hallucination, formal proof systems, and certificates." />
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+  <style>
+:root {
+  --page-bg: #f7f7f4;
+  --paper: #ffffff;
+  --ink: #151515;
+  --muted: #575757;
+  --line: #d8d8d2;
+  --soft: #f2f2ef;
+  --note: #f7f9fb;
+  --link: #064f8a;
+  --max-width: 980px;
+  --text-width: 760px;
+  --font-sans: Arial, Helvetica, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body { margin: 0; background: var(--page-bg); color: var(--ink); font-family: var(--font-sans); font-size: 0.98rem; line-height: 1.68; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+a { color: var(--link); text-decoration-thickness: 0.075em; text-underline-offset: 0.17em; }
+a:hover { color: #032f55; }
+a:focus-visible { outline: 3px solid rgba(6,79,138,.25); outline-offset: 3px; border-radius: 3px; }
+.page { max-width: var(--max-width); margin: 0 auto; padding: 34px 22px 70px; }
+.paper { background: var(--paper); border: 1px solid var(--line); box-shadow: 0 18px 42px rgba(0,0,0,.055); }
+header { padding: 46px 56px 34px; border-bottom: 1px solid var(--line); }
+.label { margin: 0 0 14px; color: var(--muted); font-size: .78rem; letter-spacing: .095em; text-transform: uppercase; font-weight: 700; }
+h1.title { margin: 0; max-width: 850px; font-size: clamp(1.75rem, 3.1vw, 2.55rem); line-height: 1.16; letter-spacing: -.035em; }
+.subtitle { margin: 18px 0 0; max-width: 820px; color: #303030; font-size: 1.02rem; line-height: 1.62; }
+.meta { margin-top: 22px; color: var(--muted); font-size: .88rem; }
+nav { padding: 22px 56px; border-bottom: 1px solid var(--line); background: #fbfbf9; }
+nav h2 { margin: 0 0 10px; font-size: .9rem; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
+nav ol { margin: 0; padding-left: 20px; columns: 2; column-gap: 38px; }
+nav li { break-inside: avoid; margin: 3px 0; font-size: .92rem; }
+main { padding: 36px 56px 54px; }
+article { max-width: var(--text-width); }
+section { margin: 42px 0; }
+h1:not(.title) { font-size: 1.6rem; }
+h2 { margin: 38px 0 16px; font-size: 1.34rem; line-height: 1.28; letter-spacing: -.018em; }
+h3 { margin: 24px 0 10px; font-size: 1.03rem; line-height: 1.35; }
+p { margin: 13px 0; }
+ul, ol { margin: 12px 0 12px 22px; padding: 0; }
+li { margin: 6px 0; }
+blockquote { margin: 18px 0; padding: 12px 18px; border-left: 4px solid #b9c7d6; background: var(--note); color: #262626; }
+code { font-family: var(--font-mono); font-size: .92em; }
+pre { margin: 17px 0; padding: 14px 16px; background: #f5f5f2; border: 1px solid var(--line); border-radius: 8px; overflow-x: auto; line-height: 1.55; }
+table { border-collapse: collapse; width: 100%; margin: 18px 0; font-size: .91rem; }
+th, td { border: 1px solid var(--line); padding: 9px 10px; vertical-align: top; }
+th { background: #f1f1ee; text-align: left; }
+.math.display { overflow-x: auto; }
+footer { padding: 22px 56px 38px; border-top: 1px solid var(--line); color: var(--muted); font-size: .88rem; }
+@media (max-width: 760px) { .page { padding: 16px 12px 40px; } header, nav, main, footer { padding-left: 24px; padding-right: 24px; } nav ol { columns: 1; } }
+</style>
+</head>
+<body>
+  <div class="page">
+    <div class="paper">
+      <header role="banner">
+        <p class="label">Research Note</p>
+        <h1 class="title" id="page-title">Beyond Automating Proof: Data Distributions, Trajectory Rollouts, Creative Proposals, and Certificates</h1>
+        <p class="subtitle">An academic note on LLM-assisted mathematical discovery, connecting statistical learning, scaling laws, post-training, agent trajectories, creative proposal mechanisms, soft and hard verification, hallucination theory, and formal certificates.</p>
+        <p class="meta">Draft updated June 30, 2026</p>
+      </header>
+      <nav aria-labelledby="toc-title">
+        <h2 id="toc-title">Contents</h2>
+        <ol>
+          <li><a href="#abstract">Abstract</a></li>
+<li><a href="#why-llm-as-search-engine-is-not-enough">1. Why “LLM as Search Engine” Is Not Enough</a></li>
+<li><a href="#statistical-objects-from-pretraining-distribution-to-certificate-distribution">2. Statistical Objects: From Pretraining Distribution to Certificate Distribution</a></li>
+<li><a href="#scaling-laws-transformer-moe-and-data-distribution">3. Scaling Laws, Transformer, MoE, and Data Distribution</a></li>
+<li><a href="#from-static-text-to-trajectory-rollouts">4. From Static Text to Trajectory Rollouts</a></li>
+<li><a href="#post-training-alignment-and-the-shape-of-the-proposal-distribution">5. Post-Training, Alignment, and the Shape of the Proposal Distribution</a></li>
+<li><a href="#creative-proposal-distributions">6. Creative Proposal Distributions</a></li>
+<li><a href="#pipeline-math-from-informal-discovery-to-formal-certificate">7. pipeline-math: From Informal Discovery to Formal Certificate</a></li>
+<li><a href="#ai4math-rethlasarchon-and-aristotle">8. AI4Math, Rethlas/Archon, and Aristotle</a></li>
+<li><a href="#soft-verifiers-before-hard-certificates">9. Soft Verifiers Before Hard Certificates</a></li>
+<li><a href="#hallucination-as-misweighted-association">10. Hallucination as Misweighted Association</a></li>
+<li><a href="#what-internal-structure-do-sota-llms-learn">11. What Internal Structure Do SOTA LLMs Learn?</a></li>
+<li><a href="#why-some-open-problems-become-accessible">12. Why Some Open Problems Become Accessible</a></li>
+<li><a href="#failure-modes-and-interventions">13. Failure Modes and Interventions</a></li>
+<li><a href="#toward-a-closed-loop-research-system">14. Toward a Closed-Loop Research System</a></li>
+<li><a href="#what-is-beyond-automating-proof">15. What Is Beyond Automating Proof?</a></li>
+<li><a href="#a-sharpened-research-question">16. A Sharpened Research Question</a></li>
+<li><a href="#conclusion">17. Conclusion</a></li>
+<li><a href="#references">References</a></li>
+        </ol>
+      </nav>
+      <main id="main-content" role="main">
+        <article aria-labelledby="page-title">
+<p><strong>A research note on LLM-assisted mathematical
+discovery.</strong></p>
+<h2 id="abstract">Abstract</h2>
+<p>Recent systems for LLM-assisted mathematics suggest a research
+program broader than proof automation. Frontier models are not merely
+generating Lean tactics or filling proof gaps; they are beginning to
+participate in the production of definitions, conjectures,
+counterexamples, reductions, lemma decompositions, proof sketches,
+formalization interfaces, and research narratives.</p>
+<p>A useful mathematical abstraction is to view the model as inducing a
+conditional proposal distribution over candidate mathematical
+objects,</p>
+<p><span class="math display">\[
+q_\theta(h\mid x),
+\]</span></p>
+<p>where <span class="math inline">\(x\)</span> is a problem context and
+<span class="math inline">\(h\)</span> may be a proof sketch, Lean
+program, counterexample, theorem statement, definition, conjecture,
+experiment, or research trajectory. Pretraining determines the effective
+support and inductive bias of this proposal distribution. Post-training
+reshapes its behavioral policy. Trajectory rollouts expose the model to
+feedback-rich environments. Creative generation mechanisms determine
+whether the model can sample diverse and globally coherent candidates.
+Soft verifiers reweight candidates; hard verifiers such as Lean, Coq,
+Isabelle, symbolic computation, executable tests, finite search, and
+human mathematical review impose certificates.</p>
+<p>This note argues that the central question is not whether language
+models are “smart enough” in a vague sense. A more precise question
+is:</p>
+<blockquote>
+<p>What data distributions, internal representations, post-training
+objectives, trajectory environments, creative proposal mechanisms,
+search procedures, and verifier architectures make rare but certifiable
+mathematical objects discoverable?</p>
+</blockquote>
+<p>The discussion connects five lines of work: prover-verifier pipelines
+such as <code>pipeline-math</code>; AI4Math systems such as
+Rethlas/Archon; formal proving agents such as Aristotle; verifier-based
+trajectory selection; hallucination as misweighted subsequence
+association; and algorithmic-creativity results suggesting that
+next-token prediction may be myopic for tasks requiring latent global
+planning.</p>
+<h2 id="why-llm-as-search-engine-is-not-enough">1. Why “LLM as Search
+Engine” Is Not Enough</h2>
+<p>A common description says that the model proposes candidate proofs
+and the verifier filters them. This is directionally right but
+theoretically incomplete. It leaves unspecified what distribution is
+being sampled, what target distribution mathematical research requires,
+how post-training changes model behavior, how interactive trajectories
+alter the data regime, and how language-level plausibility becomes
+mathematical validity.</p>
+<p>Given a mathematical problem context <span
+class="math inline">\(x\)</span>, an LLM should not be modeled as
+directly emitting truth. It induces a distribution</p>
+<p><span class="math display">\[
+q_\theta(h\mid x)
+\]</span></p>
+<p>over candidate objects <span class="math inline">\(h\in\mathcal
+H\)</span>: informal proofs, formal proofs, Lean programs,
+counterexamples, theorem statements, definitions, lemma graphs, symbolic
+computations, tool-use traces, or explanations. A research system
+succeeds when the target object lies in the effective support of this
+distribution and when search, creative sampling, retrieval, trajectory
+feedback, and verification amplify the relevant probability mass.</p>
+<p>The research question is therefore not merely “Can a model prove the
+theorem?” It is: what makes the probability of sampling a certifiable
+object non-negligible under realistic compute, search, and verification
+budgets?</p>
+<h2
+id="statistical-objects-from-pretraining-distribution-to-certificate-distribution">2.
+Statistical Objects: From Pretraining Distribution to Certificate
+Distribution</h2>
+<p>Let <span class="math inline">\(P_{\mathrm{pre}}\)</span> denote the
+pretraining mixture. It may contain textbooks, papers, code, formal
+proofs, forum discussions, incorrect arguments, repeated derivations,
+incomplete drafts, and noisy explanations. Next-token training fits
+conditional regularities of the form</p>
+<p><span class="math display">\[
+P_{\mathrm{pre}}(x_t\mid x_{&lt;t}).
+\]</span></p>
+<p>Mathematical discovery, however, asks for a much sparser target
+distribution. One can write an idealized target as</p>
+<p><span class="math display">\[
+P_\star(d,g,c,\pi,e\mid x),
+\]</span></p>
+<p>where <span class="math inline">\(d\)</span> denotes useful
+definitions, <span class="math inline">\(g\)</span> intermediate goals
+or conjectures, <span class="math inline">\(c\)</span> constructions or
+counterexamples, <span class="math inline">\(\pi\)</span> proofs or
+formal certificates, and <span class="math inline">\(e\)</span>
+explanatory trajectories. The fundamental problem is distribution shift:
+<span class="math inline">\(P_{\mathrm{pre}}\)</span> is not <span
+class="math inline">\(P_\star\)</span>. A model can be strong on common
+mathematical prose and still lack support on rare constructions,
+adversarial counterexamples, or formal certificates.</p>
+<p>A useful principle is:</p>
+<blockquote>
+<p>If the solution class has nearly zero probability under <span
+class="math inline">\(q_\theta(\cdot\mid x)\)</span>, a verifier cannot
+recover it. If the probability is small but nonzero, decomposition,
+retrieval, search, creative sampling, trajectory rollout, and
+verification may amplify it.</p>
+</blockquote>
+<p>Thus model capability should be described not only by benchmark
+accuracy, but by coverage, sampleability, diversity, originality, and
+selectability by verifiers.</p>
+<h2 id="scaling-laws-transformer-moe-and-data-distribution">3. Scaling
+Laws, Transformer, MoE, and Data Distribution</h2>
+<p>Industry discussions often reduce frontier model progress to three
+ingredients: Transformer, MoE, and scaling laws. This slogan is useful
+only if made precise.</p>
+<p>The Transformer provides a parallelizable architecture for sequence
+modeling. MoE increases total parameter capacity through sparse
+activation while controlling per-token active compute. Scaling laws
+describe empirical power-law relationships between loss and model size,
+data size, and training compute. Kaplan et al. studied language-model
+loss as a function of model size, dataset size, and compute;
+Chinchilla-style results emphasized that compute-optimal training
+requires scaling parameters and tokens together rather than increasing
+parameters alone.</p>
+<p>A more rigorous abstraction is:</p>
+<p><span class="math display">\[
+\text{capability} \approx
+F(\text{architecture},\text{parameters},\text{data},\text{compute},\text{optimization},\text{post-training},\text{inference-time
+search}).
+\]</span></p>
+<p>Algorithms matter, but often by making scale and feedback usable:
+stabilizing optimization, enabling larger sparse models, improving data
+quality, lowering inference cost, and converting environment feedback
+into learnable signals. For mathematical discovery, the crucial question
+is not simply how many tokens or parameters are scaled, but which
+distributions are scaled: static mathematical text, reasoning traces,
+Lean proof states, theorem-search logs, compiler failures, trajectory
+rollouts, or verified certificates.</p>
+<p>The rigorous version of the scaling argument is therefore:</p>
+<blockquote>
+<p>Mathematical discovery depends on scaling not just data volume, but
+the right mixture of text, reasoning, trajectories, formal states, and
+certificates.</p>
+</blockquote>
+<p>Brand-specific claims about closed models, internal parameter counts,
+or proprietary data mixtures should be treated cautiously unless backed
+by public ablations or documentation. The theory should be stated at the
+level of distributions and environments, not rumors about individual
+model families.</p>
+<h2 id="from-static-text-to-trajectory-rollouts">4. From Static Text to
+Trajectory Rollouts</h2>
+<p>A major shift in language-model systems is the move from chatbot
+interaction to agentic environments. In such environments, a model does
+not merely emit text; it takes actions, observes feedback, and
+continues. A trajectory can be written as</p>
+<p><span class="math display">\[
+\tau=(s_0,a_0,o_1,r_1,s_1,a_1,o_2,r_2,\ldots),
+\]</span></p>
+<p>with approximate distribution</p>
+<p><span class="math display">\[
+P(\tau)=P(s_0)\prod_t \pi_\theta(a_t\mid
+h_t)E(o_{t+1},r_{t+1},s_{t+1}\mid s_t,a_t),
+\]</span></p>
+<p>where <span class="math inline">\(E\)</span> is the environment and
+<span class="math inline">\(h_t\)</span> is the model-visible
+history.</p>
+<p>For a coding agent, the environment may include the command line,
+Python, unit tests, a browser, a repository, or a compiler. For a
+mathematical agent, the environment may include Lean, Coq, Isabelle, a
+CAS, an SMT solver, a finite model finder, a theorem search engine, or a
+paper retrieval system.</p>
+<p>A useful concept is <strong>verifier density</strong>: the degree to
+which an environment supplies cheap, objective, frequent feedback for
+local actions. Proof assistants are high-verifier-density environments
+because each tactic, lemma, import, and definition can be checked by a
+type checker. Informal mathematical research is lower-density because
+many conceptual moves cannot be locally certified.</p>
+<p>This clarifies the AlphaGo analogy. Go is a closed game with exact
+rules and a clear self-play reward. Computer-use and theorem-proving
+environments are semi-closed: they have executable feedback, but their
+goals, semantic background, and task spaces are more open. The right
+lesson is not that agent training escapes scaling laws. Rather:</p>
+<blockquote>
+<p>Trajectory rollout changes what kind of data is being scaled: from
+static text tokens to interaction traces in feedback-rich
+environments.</p>
+</blockquote>
+<p>For mathematics, the relevant data families include static papers and
+textbooks, distilled reasoning traces, tool-use trajectories, proof
+assistant states, theorem DAGs, tactic scripts, failed formalization
+attempts, and verified certificates. A strong AI-for-math system may
+arise from closing the loop among these distributions: text supplies
+priors, trajectories supply feedback, formal states supply precision,
+and certificates supply truth.</p>
+<h2
+id="post-training-alignment-and-the-shape-of-the-proposal-distribution">5.
+Post-Training, Alignment, and the Shape of the Proposal
+Distribution</h2>
+<p>Pretraining is not the whole story. SFT, RLHF, RLAIF, DPO-style
+preference optimization, rejection sampling, tool-use training, safety
+training, and long-CoT distillation modify the proposal
+distribution:</p>
+<p><span class="math display">\[
+q_{\theta_0}(h\mid x) \longrightarrow q_{\theta_{\mathrm{post}}}(h\mid
+x).
+\]</span></p>
+<p>These procedures may improve instruction following, decomposition,
+self-correction, tool use, and verifier-facing explanations. They may
+also bias a model toward polished but conventional answers, discourage
+risky conjectural exploration, or reward surface plausibility over
+mathematical discoverability.</p>
+<p>This creates a special version of the weak-to-strong supervision
+problem. If human supervisors or LLM verifiers are too weak to judge
+deep mathematical correctness, post-training may optimize the wrong
+signal. Alignment for mathematical discovery should therefore optimize
+calibrated uncertainty, search diversity, certificate-seeking behavior,
+and willingness to expose unresolved proof obligations.</p>
+<p>A research-oriented model should naturally say: “this lemma is still
+unproved,” “this construction works in finite tests but lacks a general
+proof,” “this step needs formal verification,” or “the current library
+lacks the required abstraction.” Scientific alignment is not the same as
+ordinary chatbot helpfulness.</p>
+<h2 id="creative-proposal-distributions">6. Creative Proposal
+Distributions</h2>
+<p>Verification is only useful after there is something worth verifying.
+The paper <em>Roll the dice &amp; look before you leap</em> highlights a
+generator-side bottleneck: standard autoregressive next-token learning
+may be structurally myopic for tasks requiring implicit stochastic
+planning before generation.</p>
+<p>Autoregressive generation factors as</p>
+<p><span class="math display">\[
+q_\theta(y\mid x)=\prod_{t=1}^T q_\theta(y_t\mid x,y_{&lt;t}).
+\]</span></p>
+<p>Open-ended creativity may require first choosing a latent global
+plan,</p>
+<p><span class="math display">\[
+q_\theta(y\mid x)=\int q_\theta(z\mid x)\prod_{t=1}^T q_\theta(y_t\mid
+x,z,y_{&lt;t})\,dz,
+\]</span></p>
+<p>where <span class="math inline">\(z\)</span> is a latent
+construction, analogy bridge, seed, proof strategy, or counterexample
+template.</p>
+<p>In the algorithmic creativity tasks of that paper, teacherless
+multi-token training and diffusion-style methods produce more diverse
+and original outputs than standard next-token learning. Input-level
+randomness through hash-conditioning is often more effective than merely
+raising the output temperature because it allows randomness to select a
+coherent latent plan before local generation begins.</p>
+<p>For mathematical discovery, this matters. A useful counterexample,
+analogy, theorem decomposition, finite shadow, or proof path is not
+simply a locally smooth continuation of text. It often requires a global
+choice of representation. Thus the pipeline should be extended:</p>
+<p><span class="math display">\[
+\text{scaling/data}\rightarrow\text{post-training}\rightarrow\text{trajectory
+rollout}\rightarrow\text{creative proposal
+distribution}\rightarrow\text{search}\rightarrow\text{verifier
+selection}\rightarrow\text{certificate}.
+\]</span></p>
+<p>The key question is not only how to verify a candidate, but how to
+train a model to propose candidates worth verifying.</p>
+<h2 id="pipeline-math-from-informal-discovery-to-formal-certificate">7.
+<code>pipeline-math</code>: From Informal Discovery to Formal
+Certificate</h2>
+<p>The <code>pipeline-math</code> repository is important because it
+places LLM-generated mathematical reasoning inside an auditable
+prover-verifier pipeline. The core abstraction is not that the LLM is
+trusted as an oracle, but that a generated proposal is mapped into
+formal proof obligations.</p>
+<p>A typical flow is:</p>
+<pre class="text"><code>open problem
+  → candidate construction / proof sketch
+  → frozen definitions and theorem statements
+  → modular proof obligations
+  → Lean formalization
+  → no-statement-drift checks
+  → sorry / axiom / unsafe audit
+  → human-readable theorem</code></pre>
+<p>The crucial design is the frozen semantic interface. Definitions and
+theorem statements are fixed before proof files are accepted. Discharge
+gates check that proof declarations match the frozen theorem statements.
+Verification scripts audit for <code>sorry</code>, axioms, unsafe
+definitions, and statement drift. In statistical terms, the system maps
+a raw proposal <span class="math inline">\(h\)</span> to a certificate
+predicate</p>
+<p><span class="math display">\[
+C(x,h)\in\{0,1\}.
+\]</span></p>
+<p>Lean acceptance is a hard certificate rather than linguistic
+plausibility. The LLM is a proposal mechanism; the proof assistant,
+symbolic computation, finite search, theorem proving, and expert review
+are the certificate stack.</p>
+<h2 id="ai4math-rethlasarchon-and-aristotle">8. AI4Math, Rethlas/Archon,
+and Aristotle</h2>
+<p>Recent public systems show that AI-for-math is becoming an
+architecture question rather than a single-model question.</p>
+<p>AI4Math’s Anderson conjecture project separates an informal reasoning
+agent, Rethlas, from a formal verification agent, Archon. Rethlas uses
+the theorem search engine Matlas to find relevant mathematical results
+and construct candidate proofs. Archon uses LeanSearch and structured
+decomposition to turn informal arguments into Lean 4 projects. The
+authors report resolving an open problem in commutative algebra proposed
+by D. D. Anderson and verifying the result in Lean 4. The corresponding
+repository describes a Lean formalization of the statement that there
+exists a weakly quasi-complete Noetherian local ring that is not
+quasi-complete, with roughly 20,000 lines of Lean across 44 files.</p>
+<p>The significance is not that an AI system has replaced
+mathematicians. It is that a system combining semantic theorem
+retrieval, informal proposal generation, task decomposition, formal
+proof synthesis, and hard verification can discover and certify a
+nontrivial counterexample. The architecture is the message:</p>
+<pre class="text"><code>semantic retrieval → informal proof blueprint → formal task decomposition → Lean synthesis → certificate</code></pre>
+<p>Harmonic’s Aristotle represents a related direction: a long-horizon
+formal theorem-proving agent that combines informal, human-like
+reasoning with Lean 4 verification and Monte Carlo-style proof search.
+Public materials report gold-medal-level performance on the 2025 IMO
+formal problems and emphasize autonomous proving/formalization over long
+time horizons. These claims should still be read with benchmark and
+reporting caveats, but they indicate a clear trend:</p>
+<blockquote>
+<p>Formal theorem proving systems are becoming long-horizon agents, not
+merely tactic predictors.</p>
+</blockquote>
+<p>For theory, the important object is the proof-search trajectory:
+proof state, action, Lean feedback, repair, lemma invention, new proof
+state, and eventually a certificate or failure trace. This is precisely
+the kind of data that can make future models better.</p>
+<h2 id="soft-verifiers-before-hard-certificates">9. Soft Verifiers
+Before Hard Certificates</h2>
+<p>LLM-as-a-Verifier frameworks are not formal theorem provers. They
+provide soft trajectory selection. Given many candidate trajectories, a
+verifier model scores them using decomposed criteria, repeated
+verification, and score-token log probabilities. This can be modeled as
+verifier-induced reweighting:</p>
+<p><span class="math display">\[
+q_{\theta,V,\beta}(h\mid x)\propto q_\theta(h\mid x)\exp(\beta V(x,h)).
+\]</span></p>
+<p>When <span class="math inline">\(V\)</span> is an LLM judge, this is
+soft and fallible. When <span class="math inline">\(V\)</span> is Lean
+acceptance, an executable test, or exact computation, it approaches hard
+truncation:</p>
+<p><span class="math display">\[
+q_\theta(h\mid x,C=1).
+\]</span></p>
+<p>A robust mathematical discovery system should use multiple layers:
+generator, trajectory environment, soft verifier, hard verifier, and
+human expert judgment. The soft verifier should reduce search cost; it
+should not replace formal correctness.</p>
+<h2 id="hallucination-as-misweighted-association">10. Hallucination as
+Misweighted Association</h2>
+<p>The subsequence-association view of hallucination explains why the
+generator is useful but unreliable. A decoder-only transformer may learn
+many partial input-output associations; when a hallucinatory association
+dominates the faithful global structure, the model emits a plausible but
+false statement.</p>
+<p>Mathematics is full of such traps. Associations like “integer-valued
+polynomial ring implies closure under multiplication,” “canonical tensor
+product map is likely an isomorphism,” or “finite-conductor hypotheses
+imply nice coherence behavior” may be correct in common regimes but
+false near the boundary of an open problem.</p>
+<p>Combined with the creativity discussion, the generator-side theory
+becomes:</p>
+<blockquote>
+<p>Hallucination is local association without truth discipline; weak
+creativity is local prediction without latent global planning; weak
+agency is action generation without feedback-calibrated
+trajectories.</p>
+</blockquote>
+<p>Verification filters bad candidates, but a theory of mathematical
+discovery must also explain how candidate generation goes wrong and how
+training, retrieval, trajectory feedback, and formal environments can
+correct it.</p>
+<h2 id="what-internal-structure-do-sota-llms-learn">11. What Internal
+Structure Do SOTA LLMs Learn?</h2>
+<p>A plausible hypothesis is that LLMs learn a compressed, entangled,
+probabilistic atlas of mathematical text, code, proof motifs, symbolic
+transformations, formalization patterns, and interactive trajectories.
+The internal objects are not literal theorem databases. They are
+mixtures of associative fragments, algorithmic circuits, proof
+templates, counterexample priors, library priors, trajectory priors, and
+latent plan priors.</p>
+<p>Mechanistic interpretability provides early tools for studying this:
+induction heads, superposition, sparse features, and circuit analysis.
+But mathematical discovery needs task-specific interpretability. We need
+to know which features correspond to algebraic construction patterns,
+which circuits support symbolic binding, which subsequences trigger
+false lemma hallucinations, and which trajectory patterns teach
+proof-state repair.</p>
+<p>This cannot be inferred from benchmark accuracy alone. It requires
+linking interpretability, data distribution, trajectory analysis, formal
+verification, and failure mining.</p>
+<h2 id="why-some-open-problems-become-accessible">12. Why Some Open
+Problems Become Accessible</h2>
+<p>LLM-assisted systems are more likely to help with open problems that
+have favorable structure:</p>
+<ol type="1">
+<li>The answer admits a compact construction, counterexample, finite
+witness, or proof DAG.</li>
+<li>The ingredients already exist in literature, code, or formal
+libraries.</li>
+<li>The difficulty is recombination rather than the creation of an
+entirely new theory.</li>
+<li>Wrong candidates can be rejected cheaply.</li>
+<li>The final result can be checked by Lean, computation, or
+experts.</li>
+<li>The proposal distribution assigns non-negligible mass to the right
+structure.</li>
+<li>Creative sampling produces diverse candidates rather than minor
+variants of common templates.</li>
+<li>The trajectory environment supplies dense enough feedback for
+repair.</li>
+</ol>
+<p>Counterexample-driven mathematics is therefore especially suitable
+for early LLM-assisted discovery: it often has compact witnesses and
+locally verifiable properties.</p>
+<p>Failures are more informative when decomposed. A failed attempt may
+indicate support failure, search failure, creative proposal failure,
+trajectory failure, verifier failure, retrieval failure, representation
+failure, alignment failure, specification failure, library failure,
+curriculum failure, or significance failure.</p>
+<h2 id="failure-modes-and-interventions">13. Failure Modes and
+Interventions</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Failure mode</th>
+<th>Meaning</th>
+<th>Possible intervention</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Support failure</td>
+<td>The correct structure has near-zero mass under <span
+class="math inline">\(q_\theta\)</span></td>
+<td>Targeted data, retrieval, library expansion, domain finetuning</td>
+</tr>
+<tr class="even">
+<td>Search failure</td>
+<td>The correct structure has small mass but is not sampled</td>
+<td>Best-of-N, tree search, theorem DAG decomposition, parallel
+sampling</td>
+</tr>
+<tr class="odd">
+<td>Creative proposal failure</td>
+<td>Candidates lack diversity or originality</td>
+<td>Multi-token training, diffusion, seed-conditioning, latent-plan
+prompting</td>
+</tr>
+<tr class="even">
+<td>Trajectory failure</td>
+<td>The agent has too little interaction data or sparse feedback</td>
+<td>Lean/Python/CLI rollouts, richer environments, tool feedback</td>
+</tr>
+<tr class="odd">
+<td>Data-distribution failure</td>
+<td>The corpus contains text but few proof-state, tool-use, or failure-repair trajectories</td>
+<td>Synthetic formal tasks, environment rollouts, curated negative data, certificate datasets</td>
+</tr>
+<tr class="even">
+<td>Infrastructure failure</td>
+<td>The model lacks scalable retrieval, Lean environments, kernel checks, or library APIs</td>
+<td>Matlas/LeanSearch-style theorem search, reproducible Lean projects, library engineering</td>
+</tr>
+<tr class="odd">
+<td>Scale-misdiagnosis failure</td>
+<td>Capability is attributed to parameter count alone while distribution, feedback, and verification are ignored</td>
+<td>Public ablations, model cards, data-regime analysis, environment-level evaluation</td>
+</tr>
+<tr class="odd">
+<td>Verifier failure</td>
+<td>Wrong candidates are accepted or right ones rejected</td>
+<td>Stronger verifiers, adversarial tests, formal certificates,
+calibration</td>
+</tr>
+<tr class="even">
+<td>Retrieval failure</td>
+<td>A key theorem or paper is missed</td>
+<td>Semantic theorem search, citation-graph search, human seed
+hints</td>
+</tr>
+<tr class="odd">
+<td>Representation failure</td>
+<td>The problem is encoded poorly</td>
+<td>Better definitions, finite shadows, alternate encodings</td>
+</tr>
+<tr class="even">
+<td>Alignment failure</td>
+<td>Post-training rewards fluency over research exploration</td>
+<td>Research-oriented SFT/RLHF, uncertainty calibration, failure-trace
+data</td>
+</tr>
+<tr class="odd">
+<td>Specification failure</td>
+<td>The theorem statement drifts or is wrong</td>
+<td>Frozen interfaces, theorem stubs, discharge gates, expert
+review</td>
+</tr>
+<tr class="even">
+<td>Library failure</td>
+<td>The formal ecosystem lacks needed abstractions</td>
+<td>Mathlib expansion, lemma mining, proof repair logs</td>
+</tr>
+<tr class="odd">
+<td>Curriculum failure</td>
+<td>The model lacks nearby proof/counterexample trajectories</td>
+<td>Active data, synthetic formal tasks, solver-verifier self-play</td>
+</tr>
+<tr class="even">
+<td>Significance failure</td>
+<td>The result is formally correct but unimportant</td>
+<td>Human taste, problem selection, novelty filters</td>
+</tr>
+</tbody>
+</table>
+<p>The practical question after a failure is therefore: which bottleneck
+failed, and what data, search, environment, verifier, or library
+intervention would move the target object into reach?</p>
+<h2 id="toward-a-closed-loop-research-system">14. Toward a Closed-Loop
+Research System</h2>
+<p>A complete LLM mathematical discovery system should be a closed
+loop:</p>
+<pre class="text"><code>pretraining / post-training / synthetic data
+        ↓
+agent trajectory rollouts and proof-state data
+        ↓
+creative proposal model qθ(h|x)
+        ↓
+seeded / multi-token / diffusion-style sampling
+        ↓
+theorem retrieval / tool use / environment interaction
+        ↓
+soft verifier ranking
+        ↓
+formal verification / computation / finite search
+        ↓
+certificate or failure trace
+        ↓
+failure mining / active data / library expansion
+        ↓
+updated model, tools, and formal ecosystem</code></pre>
+<p>In this loop, failures are not discarded. Lean errors, failed proof
+states, wrong counterexamples, overstrong statements, missing coercions,
+unavailable lemmas, bad retrieval paths, and false analogy traces become
+active data.</p>
+<p>The human researcher’s role shifts from merely checking final proofs
+to designing the right decomposition, formal interface, verifier stack,
+retrieval corpus, trajectory environment, curriculum, and notion of
+significance.</p>
+<h2 id="what-is-beyond-automating-proof">15. What Is Beyond Automating
+Proof?</h2>
+<p>If proof automation means “given a theorem, find a proof,” then
+beyond proof automation includes definition discovery, conjecture
+generation, counterexample search, analogy discovery, representation
+design, formal interface design, trajectory-environment design, creative
+proposal training, verifier-aware learning, failure-to-data conversion,
+and human-AI research methodology.</p>
+<p>A concise formulation is:</p>
+<blockquote>
+<p>Beyond automating proof is the study of how statistical models,
+trajectory environments, creative proposal mechanisms, formal verifiers,
+and human mathematical taste can form a reliable discovery process.</p>
+</blockquote>
+<p>This is a different objective from making a model sound like a
+mathematician. The aim is to build an infrastructure in which models
+propose, environments respond, verifiers discipline, failures become
+curriculum, libraries become shared memory, and humans guide abstraction
+and significance.</p>
+<h2 id="a-sharpened-research-question">16. A Sharpened Research
+Question</h2>
+<p>Given a problem context <span class="math inline">\(x\)</span>,
+candidate space <span class="math inline">\(\mathcal H\)</span>, model
+proposal distribution <span class="math inline">\(q_\theta(h\mid
+x)\)</span>, latent plan distribution <span
+class="math inline">\(q_\theta(z\mid x)\)</span>, trajectory environment
+<span class="math inline">\(E\)</span>, soft verifier <span
+class="math inline">\(V(x,h)\)</span>, and certificate predicate <span
+class="math inline">\(C(x,h)\)</span>, we want to understand</p>
+<p><span class="math display">\[
+p_B(x)=\Pr[\exists h\in\mathcal S_B(x):C(x,h)=1],
+\]</span></p>
+<p>where <span class="math inline">\(\mathcal S_B(x)\)</span> is the
+candidate set produced under search budget <span
+class="math inline">\(B\)</span>. Under a crude independent-sampling
+approximation, if one sample succeeds with probability <span
+class="math inline">\(p\)</span>, then</p>
+<p><span class="math display">\[
+p_B\approx 1-(1-p)^B.
+\]</span></p>
+<p>The real research problem is that <span
+class="math inline">\(p\)</span> is endogenous. It depends on
+pretraining support, model scale, post-training, next-token versus
+multi-token objectives, seed-conditioning, retrieval, tool use, theorem
+DAG decomposition, verifier calibration, formal library coverage,
+failure-trace feedback, and human abstraction design.</p>
+<p>This decomposition is more productive than asking whether a model can
+solve open problems in the abstract. It yields components that can be
+measured, analyzed, and improved.</p>
+<h2 id="conclusion">17. Conclusion</h2>
+<p><code>pipeline-math</code> illustrates a hard-verifier mathematical
+discovery pipeline. AI4Math’s Rethlas/Archon illustrates theorem
+retrieval plus informal reasoning plus formal verification. Aristotle
+illustrates long-horizon formal proving agents. LLM-as-a-Verifier
+illustrates soft trajectory selection. Hallucination theory explains why
+generators are misled by local associations. Algorithmic-creativity work
+shows that generators may need latent global planning beyond next-token
+prediction.</p>
+<p>Together these lines of work suggest a broader scientific
+program:</p>
+<blockquote>
+<p>Build systems where models generate diverse and original mathematical
+candidates, trajectory environments provide feedback, verifiers impose
+truth, failures become curriculum, formal libraries become shared
+memory, and human researchers guide abstraction and significance.</p>
+</blockquote>
+<p>This is the deeper meaning of LLMs for mathematics: not
+language-level imitation of mathematicians, but a new discovery
+infrastructure combining statistical learning, trajectory rollout,
+creative generation, formal methods, and human taste.</p>
+<h2 id="references">References</h2>
+<ol type="1">
+<li>Peng Binghui et al., <code>pipeline-math</code>:
+https://github.com/Pengbinghui/pipeline-math</li>
+<li>LLM-as-a-Verifier project:
+https://llm-as-a-verifier.notion.site/</li>
+<li>FrenzyMath / AI4Math, <em>Automated Conjecture Resolution with
+Formal Verification</em>: https://frenzymath.com/blog/conjecture/</li>
+<li>Ju et al., <em>Automated Conjecture Resolution with Formal
+Verification</em>, arXiv:2604.03789:
+https://arxiv.org/abs/2604.03789</li>
+<li>FrenzyMath Anderson Conjecture Lean repository:
+https://github.com/frenzymath/Anderson-Conjecture</li>
+<li>Harmonic, <em>Aristotle: IMO-level Automated Theorem Proving</em>,
+arXiv:2510.01346: https://arxiv.org/abs/2510.01346</li>
+<li>Harmonic Aristotle API page: https://aristotle.harmonic.fun/</li>
+<li>Anthropic, <em>Introducing computer use</em>:
+https://www.anthropic.com/news/3-5-models-and-computer-use</li>
+<li>Anthropic docs, <em>Computer use tool</em>:
+https://platform.claude.com/docs/en/agents-and-tools/tool-use/computer-use-tool</li>
+<li>Anthropic, <em>Measuring AI agent autonomy in practice</em>:
+https://www.anthropic.com/research/measuring-agent-autonomy</li>
+<li>Kaplan et al., <em>Scaling Laws for Neural Language Models</em>,
+arXiv:2001.08361.</li>
+<li>Hoffmann et al., <em>Training Compute-Optimal Large Language
+Models</em>, arXiv:2203.15556.</li>
+<li>Vaswani et al., <em>Attention Is All You Need</em>,
+arXiv:1706.03762.</li>
+<li>Fedus et al., <em>Switch Transformers</em>, arXiv:2101.03961.</li>
+<li>Ouyang et al., <em>Training language models to follow instructions
+with human feedback</em>, arXiv:2203.02155.</li>
+<li>Rafailov et al., <em>Direct Preference Optimization</em>,
+arXiv:2305.18290.</li>
+<li>Burns et al., <em>Weak-to-Strong Generalization</em>,
+arXiv:2312.09390.</li>
+<li>Chen et al., <em>Why and How LLMs Hallucinate</em>,
+arXiv:2504.12691.</li>
+<li>Nagarajan et al., <em>Roll the dice &amp; look before you leap</em>,
+arXiv:2504.15266.</li>
+<li>Silver et al., <em>Mastering the game of Go without human
+knowledge</em>, Nature 2017.</li>
+<li>Olsson et al., <em>In-context Learning and Induction Heads</em>,
+arXiv:2209.11895.</li>
+<li>Elhage et al., <em>Toy Models of Superposition</em>,
+arXiv:2209.10652.</li>
+</ol>
+
+        </article>
+      </main>
+      <footer>
+        This draft is intended as a research-note style blog post. Public system claims are stated at the level supported by papers, repositories, or official documentation; closed-model training mixtures and proprietary parameter counts are treated as unknown.
+      </footer>
+    </div>
+  </div>
+</body>
+</html>
