@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Beyond Automating Proof: Toward a Statistical Theory of LLM Mathematical Discovery</title>
+  <meta name="description" content="A research essay on LLMs, proof verification, post-training, data distributions, hallucination, and the statistical foundations of mathematical discovery systems." />
+  <style>
+    :root {
+      --bg: #fbfaf6;
+      --paper: #fffefa;
+      --ink: #161616;
+      --muted: #6a645c;
+      --line: #ded5c7;
+      --soft: #f0e9de;
+      --accent: #7c3f25;
+      --accent2: #244e6d;
+      --accent3: #48654d;
+      --code: #f5efe5;
+      --shadow: 0 26px 80px rgba(45, 32, 18, .13);
+      --radius: 26px;
+      --max: 1020px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 8% 2%, rgba(124, 63, 37, .13), transparent 30rem),
+        radial-gradient(circle at 90% 4%, rgba(36, 78, 109, .12), transparent 31rem),
+        linear-gradient(180deg, #fffdf8 0%, var(--bg) 48%, #f5efe6 100%);
+      font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+      line-height: 1.72;
+      letter-spacing: -0.004em;
+    }
+    a { color: var(--accent2); text-decoration-thickness: .08em; text-underline-offset: .18em; }
+    a:hover { color: var(--accent); }
+    .page { max-width: var(--max); margin: 0 auto; padding: 38px 20px 78px; }
+    .hero {
+      position: relative;
+      overflow: hidden;
+      margin: 32px 0 30px;
+      padding: clamp(34px, 7vw, 76px);
+      border: 1px solid rgba(222, 213, 199, .95);
+      border-radius: calc(var(--radius) + 10px);
+      background: rgba(255, 255, 255, .78);
+      box-shadow: var(--shadow);
+    }
+    .hero:before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(120deg, rgba(124,63,37,.12), transparent 36%),
+        linear-gradient(315deg, rgba(36,78,109,.12), transparent 34%);
+      pointer-events: none;
+    }
+    .hero-inner { position: relative; z-index: 1; }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--accent);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: .78rem;
+      font-weight: 800;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .eyebrow:before { content: ""; display: inline-block; width: 34px; height: 1px; background: var(--accent); }
+    h1 {
+      margin: 0;
+      max-width: 900px;
+      font-size: clamp(2.25rem, 6.3vw, 5.35rem);
+      line-height: .97;
+      letter-spacing: -.07em;
+      font-weight: 720;
+    }
+    .subtitle {
+      max-width: 790px;
+      margin: 24px 0 0;
+      font-size: clamp(1.08rem, 2vw, 1.36rem);
+      line-height: 1.57;
+      color: #3e3933;
+    }
+    .byline {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 16px;
+      margin-top: 30px;
+      align-items: center;
+      color: var(--muted);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: .92rem;
+    }
+    .pill { border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; background: rgba(255,255,255,.68); }
+    nav.toc {
+      margin: 26px 0 34px;
+      padding: 18px 22px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: rgba(255, 255, 255, .66);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    nav.toc strong { display: block; margin-bottom: 10px; }
+    nav.toc a { display: inline-block; margin: 5px 14px 5px 0; color: var(--muted); text-decoration: none; border-bottom: 1px solid transparent; }
+    nav.toc a:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
+    main.article {
+      padding: clamp(28px, 6vw, 66px);
+      border: 1px solid rgba(222, 213, 199, .95);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.84);
+      box-shadow: 0 16px 50px rgba(45, 32, 18, .08);
+    }
+    section { margin: 0 0 58px; }
+    section:last-child { margin-bottom: 0; }
+    h2 {
+      margin: 0 0 18px;
+      font-size: clamp(1.6rem, 3.4vw, 2.5rem);
+      line-height: 1.08;
+      letter-spacing: -.045em;
+      font-weight: 720;
+    }
+    h3 {
+      margin: 30px 0 10px;
+      font-size: 1.18rem;
+      line-height: 1.22;
+      letter-spacing: -.02em;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    p { margin: 0 0 18px; font-size: 1.06rem; }
+    .lead { font-size: clamp(1.14rem, 2vw, 1.32rem); color: #302c27; }
+    .note, .thesis, .mathbox, .warning, .callout {
+      margin: 26px 0;
+      padding: 22px 24px;
+      border-radius: 22px;
+      border: 1px solid var(--line);
+      background: #fffaf0;
+    }
+    .thesis {
+      position: relative;
+      background: linear-gradient(135deg, rgba(124,63,37,.10), rgba(36,78,109,.08));
+      border-color: rgba(124,63,37,.24);
+    }
+    .thesis strong { color: var(--accent); }
+    .mathbox { background: #f7f4ed; border-color: #dad0c1; }
+    .warning { background: #fff7f2; border-color: #e5cbbd; }
+    .callout { background: #f5f8f3; border-color: #cfdbc9; }
+    blockquote {
+      margin: 28px 0;
+      padding: 8px 0 8px 22px;
+      border-left: 4px solid var(--accent);
+      color: #38332e;
+      font-size: 1.18rem;
+      line-height: 1.58;
+    }
+    code, .formula {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      background: var(--code);
+      border: 1px solid rgba(222, 213, 199, .8);
+      border-radius: 8px;
+      padding: .08rem .35rem;
+      font-size: .94em;
+    }
+    .display-formula {
+      overflow-x: auto;
+      white-space: nowrap;
+      margin: 18px 0;
+      padding: 17px 18px;
+      border-radius: 16px;
+      background: #f5efe5;
+      border: 1px solid rgba(222, 213, 199, .9);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: .94rem;
+    }
+    ul, ol { padding-left: 1.25rem; }
+    li { margin: 8px 0; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin: 22px 0;
+    }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: rgba(255,255,255,.74);
+      padding: 18px 20px;
+    }
+    .card strong {
+      display: block;
+      color: var(--accent2);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin-bottom: 8px;
+      letter-spacing: -.02em;
+    }
+    .small { color: var(--muted); font-size: .95rem; }
+    .refs li { margin-bottom: 10px; }
+    footer {
+      color: var(--muted);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: .9rem;
+      margin-top: 30px;
+      text-align: center;
+    }
+    @media (max-width: 760px) {
+      .grid { grid-template-columns: 1fr; }
+      main.article { padding: 26px 22px; }
+      .hero { padding: 34px 24px; }
+    }
+    @media print {
+      body { background: white; }
+      .page { padding: 0; max-width: 100%; }
+      .hero, main.article, nav.toc { box-shadow: none; border-color: #ccc; }
+      a { color: black; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <div class="hero-inner">
+        <div class="eyebrow">Research Note · Statistical Foundations</div>
+        <h1>Beyond Automating Proof</h1>
+        <p class="subtitle">Toward a statistical theory of LLM mathematical discovery: from pretraining distributions and post-training alignment to verifier-induced selection, formal certificates, and the question of what lies beyond proof automation.</p>
+        <div class="byline">
+          <span class="pill">Draft for discussion</span>
+          <span class="pill">LLMs · Lean · Verifiers · Learning Theory</span>
+          <span class="pill">Revised thesis: no oracle, only distributions plus certificates</span>
+        </div>
+      </div>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <a href="#misleading">1. Why the first slogan was insufficient</a>
+      <a href="#object">2. The statistical object</a>
+      <a href="#tilting">3. Solver–verifier as distributional tilting</a>
+      <a href="#learned">4. What is learned?</a>
+      <a href="#alignment">5. SFT, alignment, and superalignment</a>
+      <a href="#pipeline">6. Reading pipeline-math correctly</a>
+      <a href="#beyond">7. Beyond proof automation</a>
+      <a href="#incapable">8. Making incapable models capable</a>
+      <a href="#program">9. A research program</a>
+    </nav>
+
+    <main class="article">
+      <section id="misleading">
+        <h2>1. Why the first slogan was insufficient</h2>
+        <p class="lead">The attractive slogan was: an LLM is a high-entropy mathematical search engine, and a verifier stack is a truth-preserving compression filter. It is memorable, but it is not yet a theory.</p>
+        <p>It hides the most important questions: search with respect to which distribution? truth under which target measure? verification with what soundness? post-training aligned to whose preferences? and what happens when the research problem lies far outside the support of the training data?</p>
+        <div class="thesis">
+          <p><strong>Revised thesis.</strong> An LLM-based mathematical research system should be modeled as a learned conditional proposal distribution over mathematical objects, proof programs, conjectures, and natural-language explanations. Pretraining estimates statistical regularities of a large data mixture; SFT and preference optimization reshape the policy toward human-desired behavior; test-time search samples candidate trajectories; verifiers tilt or truncate the candidate distribution toward certificates. Formal proof is not a metaphorical filter. It is a certificate mechanism that changes the epistemic status of a generated object.</p>
+        </div>
+        <p>This reframing is less romantic but more useful. It says that LLMs do not become reliable by sounding mathematical. They become useful when their learned distribution places non-negligible probability mass on certifiable objects, and when the surrounding system can identify those objects without being fooled by fluent but false ones.</p>
+      </section>
+
+      <section id="object">
+        <h2>2. The statistical object: from data distribution to research distribution</h2>
+        <p>Let <span class="formula">P_pre</span> denote the mixture distribution that produced the pretraining corpus: textbooks, papers, code, forum answers, Lean files, problem solutions, informal exposition, and many artifacts that only approximate truth. A decoder-only language model is trained to approximate local conditionals of this distribution:</p>
+        <div class="display-formula">p_θ(x_t | x_{&lt;t}) ≈ P_pre(x_t | x_{&lt;t}).</div>
+        <p>But mathematical discovery is not sampled from <span class="formula">P_pre</span>. The target object is closer to a latent distribution over certified research artifacts:</p>
+        <div class="display-formula">z = (definition d, construction c, conjecture g, proof certificate π, explanation e) ∼ P_★.</div>
+        <p>The research problem is therefore a distribution-shift problem. The model is trained on traces of human mathematics, but we ask it to generate new certified mathematical objects under a target distribution that may be rare, underrepresented, or absent in the corpus.</p>
+        <div class="mathbox">
+          <p><strong>Key statistical tension.</strong> If a valid solution has essentially zero support under the model’s proposal distribution, no verifier can recover it by selection alone. If the model assigns it small but nonzero probability, test-time search and verification can amplify it. Thus the fundamental quantity is not raw intelligence, but <em>coverage of the solution class under the proposal distribution</em>.</p>
+        </div>
+        <p>In this language, the central question becomes: what features of training data and model architecture make the learned proposal distribution cover rare but valid mathematical structures?</p>
+      </section>
+
+      <section id="tilting">
+        <h2>3. Solver–verifier systems as distributional tilting</h2>
+        <p>For a problem prompt <span class="formula">x</span>, suppose the model samples candidate trajectories <span class="formula">h</span> from a proposal distribution <span class="formula">q_θ(h | x)</span>. A soft verifier assigns a score <span class="formula">V(x,h)</span>. Test-time selection can be idealized as an energy tilt:</p>
+        <div class="display-formula">q_{θ,V,β}(h | x) = q_θ(h | x) exp(β V(x,h)) / Z_β(x).</div>
+        <p>Here <span class="formula">β</span> controls selection pressure. A larger <span class="formula">β</span> makes the system more aggressive, but also more vulnerable to verifier overfitting, reward hacking, and spurious high-scoring trajectories.</p>
+        <p>A hard formal verifier is different. It returns a certificate predicate <span class="formula">C(x,h) ∈ {0,1}</span>. The selected distribution is no longer merely preference-weighted; it is truncated to candidates that satisfy the certificate:</p>
+        <div class="display-formula">q_θ(h | x, C=1) ∝ q_θ(h | x) · 1{C(x,h)=1}.</div>
+        <p>This is the statistical heart of LLM-assisted formal mathematics. The model supplies proposals; the proof assistant enforces a sound acceptance region.</p>
+        <div class="mathbox">
+          <p><strong>Search amplification.</strong> If one independent proposal succeeds with probability <span class="formula">p = Pr_{h∼q_θ}[C(x,h)=1]</span>, then <span class="formula">N</span> proposals succeed with probability approximately <span class="formula">1-(1-p)^N</span>. The difference between impossible and feasible is often whether <span class="formula">p</span> is astronomically small or merely small.</p>
+        </div>
+        <p>This also clarifies the role of LLM-as-a-Verifier systems. They provide a soft, cheaper scoring function before a hard certificate is available. In code and terminal tasks, logs and tests provide partial observability. In mathematics, Lean, Coq, Isabelle, symbolic computation, exhaustive finite search, and human proof review provide stronger verifiers.</p>
+      </section>
+
+      <section id="learned">
+        <h2>4. What is learned inside the model?</h2>
+        <p>A useful theory should avoid the phrase “the model understands mathematics” unless it specifies an operational meaning. A more disciplined formulation is: the model learns a high-dimensional feature map that compresses statistical regularities of mathematical language, symbolic transformations, proof traces, code, and examples.</p>
+        <p>Let <span class="formula">φ_θ(x)</span> denote the internal representation of a context. This representation may encode reusable features such as:</p>
+        <div class="grid">
+          <div class="card"><strong>Local associations</strong> theorem names, definitions, common reductions, tactic patterns, and semantic neighbors.</div>
+          <div class="card"><strong>Algorithmic circuits</strong> copying, induction-like completion, bracket matching, variable tracking, and proof-state repair.</div>
+          <div class="card"><strong>Proof templates</strong> quotient construction, kernel witness, finite model search, “prove two inclusions,” diagram chase, compactness argument.</div>
+          <div class="card"><strong>Counterexample priors</strong> small fields, nilpotents, torsion, noncommutativity, characteristic-two cancellation, pathological quotients.</div>
+        </div>
+        <p>Chen et al.’s subsequence-association view of hallucination fits naturally here. In statistical terms, hallucination is not merely a random error; it is often a high-confidence prediction under a learned proxy feature that is not invariant for the target truth predicate. A subsequence has high association with an output under <span class="formula">P_pre</span>, but the full mathematical context requires a rarer association that the model has underlearned.</p>
+        <blockquote>Hallucination is a failure of learned sufficient statistics: the representation captures a feature predictive in the corpus, but not sufficient for the certificate predicate.</blockquote>
+        <p>This is why rare mathematical cases are dangerous. The common association may say “integer-valued polynomial rings are closed under multiplication,” while the open problem sits exactly at an exceptional boundary where the common association fails. Discovery begins when the model can propose a boundary object and the verifier can recognize it.</p>
+      </section>
+
+      <section id="alignment">
+        <h2>5. SFT, alignment, and the superalignment problem</h2>
+        <p>Pretraining alone estimates a broad text distribution. But frontier assistants are post-trained. Supervised fine-tuning teaches the model to imitate demonstrations of desired behavior. RLHF, DPO, RLAIF, and related methods reshape the base model into a policy that better matches human or AI-evaluated preferences.</p>
+        <p>For mathematical discovery, this matters because post-training changes the proposal distribution. It may improve instruction following, decomposition, honesty, and tool use. But it may also suppress unusual hypotheses, overfit to polished exposition, or reward persuasive explanations before truth has been certified.</p>
+        <div class="warning">
+          <p><strong>Alignment is not truth.</strong> SFT and preference optimization produce behavior that is preferred under a supervision distribution. They do not by themselves identify mathematical truth. In open research, the supervision distribution is weak exactly where the problem is hardest.</p>
+        </div>
+        <p>This is where the superalignment question appears in a mathematically precise form. If a model produces arguments or conjectures beyond what a human can immediately evaluate, how can weak supervision safely elicit strong capabilities? Mathematics has a special advantage: for many claims, a proof assistant converts a difficult-to-discover result into an easy-to-check certificate. That is a rare case where a potentially superhuman proposal can still be supervised by a mechanically checkable predicate.</p>
+        <p>But proof assistants do not solve all of research. They check a formal statement against rules. They do not automatically decide which definitions are fruitful, which conjectures are worth pursuing, which abstractions compress a field, or which experimental anomaly deserves attention. Those remain alignment, taste, and scientific-prior problems.</p>
+      </section>
+
+      <section id="pipeline">
+        <h2>6. Reading <code>pipeline-math</code> correctly</h2>
+        <p>The most interesting lesson of <code>pipeline-math</code> is not that an LLM can “solve open problems” in an oracle sense. A more careful reading is:</p>
+        <div class="thesis">
+          <p>The model-generated search distribution, together with human steering and formal verification, found candidate mathematical certificates for certain problems whose solutions could be expressed through structured constructions and checked through Lean or conventional proof review.</p>
+        </div>
+        <p>The Lean formalizations embody an important anti-hallucination pattern. Definitions are frozen. Target theorem statements are frozen. Proof files must discharge exactly those statements. Scripts ban shortcuts such as <code>sorry</code>, <code>admit</code>, unsafe axioms, or statement drift. This turns informal mathematical generation into a typed certification workflow.</p>
+        <p>Statistically, this creates a separation between the <em>proposal channel</em> and the <em>acceptance channel</em>. The LLM is allowed to be creative in the proposal channel. The acceptance channel is not creative; it is soundness-biased.</p>
+        <p>This separation is the real architecture. Without it, fluent mathematical text can be a hallucination. With it, a generated construction can become a certificate-bearing artifact.</p>
+      </section>
+
+      <section id="beyond">
+        <h2>7. What is beyond automating proof?</h2>
+        <p>Automating proof assumes the statement is already known. But much of research happens before the theorem statement is fixed. The deeper objective is not only to prove <span class="formula">g</span>, but to discover the right <span class="formula">g</span>, the right definitions under which <span class="formula">g</span> becomes natural, and the right intermediate language in which the proof is short.</p>
+        <p>Beyond proof automation lies the automation, or augmentation, of the research loop:</p>
+        <div class="grid">
+          <div class="card"><strong>Representation discovery</strong> finding the coordinate system, abstraction, quotient, category, or finite model in which the problem becomes simple.</div>
+          <div class="card"><strong>Conjecture generation</strong> proposing statements with high expected value, not merely high probability of being true.</div>
+          <div class="card"><strong>Counterexample search</strong> locating the boundary where a familiar theorem pattern breaks.</div>
+          <div class="card"><strong>Lemma economy</strong> choosing intermediate lemmas that minimize proof length and maximize reuse.</div>
+          <div class="card"><strong>Scientific taste</strong> ranking which directions deserve attention under limited computation and human time.</div>
+          <div class="card"><strong>Failure mining</strong> turning invalid proof states, false conjectures, and verifier failures into future training signal.</div>
+        </div>
+        <p>Proof automation asks: can the machine finish the derivation? Mathematical discovery asks: can the system choose the right objects so that a derivation exists and becomes visible?</p>
+        <blockquote>The elegant idea is not that LLMs replace proof. It is that proof becomes the terminal certificate of a broader statistical search over concepts, representations, and conjectures.</blockquote>
+      </section>
+
+      <section id="incapable">
+        <h2>8. If a model is incapable, what can make it capable?</h2>
+        <p>In the statistical framing, incapability can arise from several distinct bottlenecks. Each suggests a different intervention.</p>
+        <div class="grid">
+          <div class="card"><strong>Support failure</strong> The valid object has near-zero probability under <span class="formula">q_θ</span>. Intervention: targeted data, synthetic examples, curriculum, retrieval, and library expansion.</div>
+          <div class="card"><strong>Search failure</strong> The object has nonzero probability but is too rare. Intervention: tree search, self-play, verifier-guided sampling, decomposition, and tool use.</div>
+          <div class="card"><strong>Verifier failure</strong> The scoring function rewards plausibility instead of truth. Intervention: hard certificates, adversarial negatives, calibration, and independent tests.</div>
+          <div class="card"><strong>Representation failure</strong> The model lacks the abstraction needed to compress the problem. Intervention: new formal libraries, representation-learning objectives, mechanistic debugging, and expert-designed interfaces.</div>
+          <div class="card"><strong>Alignment failure</strong> Post-training rewards polished answers or premature confidence. Intervention: uncertainty calibration, refusal-to-conclude training, proof-state feedback, and process supervision.</div>
+          <div class="card"><strong>Specification failure</strong> The target theorem is ambiguous or drifting. Intervention: frozen statements, type-checked definitions, and no-drift gates.</div>
+        </div>
+        <p>This is the practical research agenda: do not ask only whether the model is smart. Ask which probability mass, verifier signal, abstraction, or supervision channel is missing.</p>
+      </section>
+
+      <section id="program">
+        <h2>9. A sharper research program</h2>
+        <p>The foundational question can now be stated more cleanly:</p>
+        <div class="thesis">
+          <p><strong>What learned representations and post-training procedures make a model’s proposal distribution cover rare but certifiable mathematical objects, and what verifier architecture can select those objects under distribution shift?</strong></p>
+        </div>
+        <p>This question decomposes into several mathematical subquestions:</p>
+        <ol>
+          <li><strong>Coverage.</strong> For what problem classes does <span class="formula">q_θ(C=1 | x)</span> become non-negligible? How does coverage scale with data, model size, retrieval, and formal-library exposure?</li>
+          <li><strong>Selection.</strong> Given a noisy verifier <span class="formula">V</span>, what is the excess risk of selecting <span class="formula">argmax V(x,h_i)</span> from <span class="formula">N</span> samples? When does verifier overfitting dominate search gains?</li>
+          <li><strong>Calibration.</strong> Can the model know when its proof sketch is outside its reliable region? Can it express uncertainty in a way useful for proof search?</li>
+          <li><strong>Identifiability.</strong> Which mathematical abstractions are identifiable from text alone, and which require interaction with symbolic environments?</li>
+          <li><strong>Weak-to-strong supervision.</strong> Which certificates allow weak human supervisors to safely elicit stronger-than-human mathematical proposals?</li>
+          <li><strong>Active data.</strong> Which failed proof states, counterexamples, and negative samples provide the highest information gain for future models?</li>
+        </ol>
+        <p>The answer will probably not be a single grand theorem. It may look more like a synthesis of statistical learning theory, information theory, mechanistic interpretability, formal methods, active learning, and alignment.</p>
+        <div class="callout">
+          <p><strong>Final formulation.</strong> LLMs do not provide mathematical certainty. They provide a trainable proposal measure over possible mathematical moves. Formal methods provide certificates. Alignment and post-training shape the proposal measure toward useful behavior. The next science is to understand when this composed system discovers new, certifiable structure rather than merely imitating the surface of old proofs.</p>
+        </div>
+      </section>
+
+      <section id="references">
+        <h2>References and anchors</h2>
+        <ol class="refs">
+          <li><a href="https://github.com/Pengbinghui/pipeline-math">Peng Binghui, <em>pipeline-math</em></a>: LLM-assisted open-problem resolutions and Lean formalization artifacts.</li>
+          <li><a href="https://llm-as-a-verifier.notion.site/">LLM-as-a-Verifier</a>: verifier-based trajectory selection for test-time scaling.</li>
+          <li><a href="https://arxiv.org/html/2504.12691v1">Lijie Chen et al., <em>Why and How LLMs Hallucinate: Connecting the Dots with Subsequence Associations</em></a>.</li>
+          <li><a href="https://arxiv.org/abs/2110.14168">Cobbe et al., <em>Training Verifiers to Solve Math Word Problems</em></a>.</li>
+          <li><a href="https://arxiv.org/abs/2203.02155">Ouyang et al., <em>Training Language Models to Follow Instructions with Human Feedback</em></a>.</li>
+          <li><a href="https://arxiv.org/abs/2305.18290">Rafailov et al., <em>Direct Preference Optimization</em></a>.</li>
+          <li><a href="https://arxiv.org/abs/2212.08073">Bai et al., <em>Constitutional AI: Harmlessness from AI Feedback</em></a>.</li>
+          <li><a href="https://arxiv.org/abs/2312.09390">Burns et al., <em>Weak-to-Strong Generalization</em></a>.</li>
+          <li><a href="https://arxiv.org/abs/2209.11895">Olsson et al., <em>In-context Learning and Induction Heads</em></a>.</li>
+          <li><a href="https://arxiv.org/abs/2209.10652">Elhage et al., <em>Toy Models of Superposition</em></a>.</li>
+        </ol>
+        <p class="small">This is a conceptual research draft, not a claim that current LLMs reliably solve arbitrary open problems. The central object is the composed system: proposal distribution, post-training, search, verification, formalization, and feedback.</p>
+      </section>
+    </main>
+
+    <footer>
+      Beyond Automating Proof · Draft revised with statistical-learning and alignment foundations
+    </footer>
+  </div>
+</body>
+</html>
