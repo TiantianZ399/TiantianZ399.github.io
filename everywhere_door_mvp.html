@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Everywhere Door / 任意门 — MVP Brief</title>
+  <style>
+    :root {
+      --bg: #fbfaf7;
+      --text: #1f1f1f;
+      --muted: #666;
+      --line: #e6e0d6;
+      --accent: #2f5cff;
+      --soft: #eef2ff;
+      --card: #ffffff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      line-height: 1.62;
+    }
+    .page {
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 56px 24px 80px;
+    }
+    header {
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 28px;
+      margin-bottom: 34px;
+    }
+    .logo {
+      font-size: 44px;
+      letter-spacing: 0.12em;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+    h1 {
+      font-size: 34px;
+      line-height: 1.15;
+      margin: 0 0 12px;
+      letter-spacing: -0.03em;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 17px;
+      max-width: 720px;
+    }
+    h2 {
+      font-size: 22px;
+      margin: 36px 0 12px;
+      letter-spacing: -0.02em;
+    }
+    h3 {
+      font-size: 17px;
+      margin: 22px 0 8px;
+    }
+    p { margin: 0 0 14px; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 22px;
+      margin: 18px 0;
+      box-shadow: 0 10px 28px rgba(0,0,0,0.04);
+    }
+    .tagline {
+      background: var(--soft);
+      border-left: 4px solid var(--accent);
+      padding: 18px 20px;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: 600;
+      margin: 22px 0;
+    }
+    ul, ol { padding-left: 22px; margin-top: 8px; }
+    li { margin: 7px 0; }
+    code {
+      background: #f2efe8;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.92em;
+    }
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin: 20px 0;
+    }
+    .flow div {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+      text-align: center;
+      font-weight: 600;
+    }
+    .small { color: var(--muted); font-size: 14px; }
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+    @media (max-width: 720px) {
+      .flow, .two-col { grid-template-columns: 1fr; }
+      h1 { font-size: 28px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <div class="logo">1111</div>
+      <h1>Everywhere Door / 任意门</h1>
+      <div class="subtitle">A GPT-first product prototype for expanding human possibility through reflection and discovery.</div>
+    </header>
+
+    <section>
+      <h2>1. Product thesis</h2>
+      <p><strong>Everywhere Door / 任意门</strong> is an AI discovery entity that helps people encounter possibilities they did not know to search for, but may become surprisingly relevant once opened. It is not another social network, AI journal, or recommendation feed. Its core purpose is to expand a person's possibility space by understanding who they are becoming and introducing the next meaningful door: a person, idea, paper, book, community, project, city, opportunity, or conversation.</p>
+      <div class="tagline">Search answers what you already know to ask. Feeds show more of what you already like. Everywhere Door opens what you did not know was possible.</div>
+      <p>The product is built on one guiding belief: people are not only shaped by what they choose, but also by what enters their world. Many important life directions begin from an unexpected encounter: a book one would not have searched for, a collaborator one would not have met, a field one did not know existed, or a question that suddenly reorganizes one's life. Everywhere Door is designed to make such encounters less accidental.</p>
+    </section>
+
+    <section>
+      <h2>2. What makes it different</h2>
+      <p>Traditional platforms optimize for attention, content consumption, search relevance, social status, or professional visibility. Everywhere Door optimizes for <strong>possibility expansion</strong>. The product does not ask, “What will this user click?” It asks, “What could meaningfully expand this user's next set of choices?”</p>
+      <div class="two-col">
+        <div class="card">
+          <h3>Existing platforms</h3>
+          <ul>
+            <li>Google: known-intent search</li>
+            <li>TikTok: attention and entertainment</li>
+            <li>RedNote: lifestyle content discovery</li>
+            <li>LinkedIn: professional identity and networking</li>
+            <li>ChatGPT: answers to explicit prompts</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Everywhere Door</h3>
+          <ul>
+            <li>Intent-free discovery</li>
+            <li>Unexpected relevance</li>
+            <li>Longitudinal self-understanding</li>
+            <li>Possibility rather than content</li>
+            <li>One door instead of infinite feed</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>3. Reflection inside the product</h2>
+      <p>The internal reasoning layer is called <strong>Reflection</strong>. Reflection is not a separate product in the first MVP; it is the engine inside Everywhere Door. It reads a user's long-term ChatGPT conversation history and extracts recurring themes, unresolved tensions, growth patterns, emotional cycles, intellectual interests, and repeated questions. Its job is to answer: <strong>Who is this person becoming?</strong></p>
+      <p>Reflection matters because a good door cannot be selected from a static profile. A resume says who someone has been. A social feed says what they recently consumed. Conversation history can reveal what they repeatedly return to, what they are trying to understand, what hurts, what excites them, and what future they are circling around. That makes it a better foundation for discovery.</p>
+      <div class="flow">
+        <div>Conversation history</div>
+        <div>Reflection</div>
+        <div>Trajectory inference</div>
+        <div>One door</div>
+      </div>
+    </section>
+
+    <section>
+      <h2>4. GPT plugin MVP</h2>
+      <p>The first version should not be a full app. It should be a <strong>ChatGPT custom GPT / plugin prototype</strong> that uses existing conversation history as the user's memory layer. The MVP should require almost no user input. Instead of asking users to fill out another profile, it should summarize their past conversations across three time windows: <strong>one month, one year, and two years</strong>.</p>
+      <div class="card">
+        <h3>Core user flow</h3>
+        <ol>
+          <li>User opens the GPT plugin called <strong>Everywhere Door / 任意门</strong>.</li>
+          <li>User chooses a time horizon: <code>Past Month</code>, <code>Past Year</code>, or <code>Past Two Years</code>.</li>
+          <li>Reflection summarizes the user's long-term themes and current trajectory.</li>
+          <li>The system outputs exactly one door for today.</li>
+          <li>User gives feedback: opened / not opened; useful / not useful; surprising / not surprising.</li>
+        </ol>
+      </div>
+    </section>
+
+    <section>
+      <h2>5. MVP output format</h2>
+      <p>Each result should be concise, personal, and explainable. The key is not the recommendation itself, but why this door is relevant now.</p>
+      <div class="card">
+        <h3>Everywhere Door output</h3>
+        <p><strong>Reflection summary:</strong> In the past year, you repeatedly returned to questions about AI, humanism, creation, love, community, and self-understanding. You seem to be moving from pure research toward building products and communities that help people become more fully human.</p>
+        <p><strong>Current bottleneck:</strong> You are not lacking ideas. You are trying to decide which idea deserves real-world execution.</p>
+        <p><strong>Today's door:</strong> Build a small GPT prototype that reflects a user's past conversations and outputs one unexpected but relevant possibility.</p>
+        <p><strong>Why this door:</strong> This is the smallest experiment that tests whether longitudinal AI memory can produce useful discovery beyond normal search or feeds.</p>
+        <p><strong>Action:</strong> Send the prototype to 10 high-agency users and ask: “Did this show you something you would not have found yourself?”</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>6. What can be behind a door?</h2>
+      <p>The other side of the door is not limited to people. That was an important design correction. A door is any possibility that can enter the user's world and expand what they can see, choose, or become.</p>
+      <ul>
+        <li><strong>Person:</strong> a collaborator, mentor, friend, founder, researcher, creator, or future teammate.</li>
+        <li><strong>Knowledge:</strong> a paper, book, lecture, blog, film, or concept.</li>
+        <li><strong>Community:</strong> a Discord, seminar, fellowship, lab, reading group, or local gathering.</li>
+        <li><strong>Action:</strong> email someone, build a prototype, apply somewhere, write a note, attend an event.</li>
+        <li><strong>Question:</strong> a question the user did not know they needed to ask.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>7. First experiment</h2>
+      <p>The first validation should be small and manual. Build the GPT plugin, invite 10–20 users, and run it for one week. The goal is not retention yet. The goal is to test whether the product can create <strong>unexpected relevance</strong>.</p>
+      <div class="card">
+        <h3>Validation questions</h3>
+        <ul>
+          <li>Did the door feel personally relevant?</li>
+          <li>Was it something you would not have searched for yourself?</li>
+          <li>Did you actually open it?</li>
+          <li>Was it valuable after opening?</li>
+          <li>Would you want another door tomorrow?</li>
+        </ul>
+      </div>
+      <p>The earliest success signal is not “users liked it.” The success signal is: <strong>“I would not have found this myself, but I am glad I did.”</strong></p>
+    </section>
+
+    <section>
+      <h2>8. Product roadmap</h2>
+      <p>The GPT plugin is only the first shell. If the experiment works, Everywhere Door can gradually become a standalone product.</p>
+      <ol>
+        <li><strong>Phase 0 — GPT plugin:</strong> reflection over ChatGPT history, one door per request, manual feedback.</li>
+        <li><strong>Phase 1 — Private dashboard:</strong> user's evolving trajectory map, saved doors, feedback history.</li>
+        <li><strong>Phase 2 — Cross-platform memory:</strong> connect blogs, GitHub, calendar, notes, reading history, public posts.</li>
+        <li><strong>Phase 3 — Network doors:</strong> people and communities become doors, with consent and trust controls.</li>
+        <li><strong>Phase 4 — Titania ecosystem:</strong> Mirror, Fellowship, and Everywhere Door become a full human development stack.</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>9. One-sentence pitch</h2>
+      <div class="tagline">Everywhere Door is a GPT-first discovery entity that reflects on who you are becoming and opens one unexpected but relevant possibility you would not have found by yourself.</div>
+      <p class="small">Internal philosophy: expand human possibility. Product mechanism: reflection plus discovery. MVP: a ChatGPT plugin that summarizes long-term conversation history and returns one door.</p>
+    </section>
+  </main>
+</body>
+</html>
