@@ -1,0 +1,692 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Compatibility-Preserving Steering for In-Context Concept Redefinition</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script>
+    window.MathJax = {
+      tex: {inlineMath: [['\\(','\\)'], ['$', '$']], displayMath: [['\\[','\\]']]},
+      svg: {fontCache: 'global'}
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+  <style>
+    :root {
+      --ink: #111827;
+      --muted: #4b5563;
+      --light: #f9fafb;
+      --line: #e5e7eb;
+      --blue: #1d4ed8;
+      --blue-bg: #eff6ff;
+      --green-bg: #ecfdf5;
+      --amber-bg: #fffbeb;
+      --red-bg: #fef2f2;
+      --purple-bg: #f5f3ff;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.55;
+      color: var(--ink);
+      margin: 0;
+      background: #ffffff;
+    }
+    .container {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 34px 22px 70px;
+    }
+    h1 {
+      font-size: 2.05rem;
+      line-height: 1.15;
+      margin: 0 0 10px;
+      letter-spacing: -0.02em;
+    }
+    h2 {
+      font-size: 1.35rem;
+      margin: 34px 0 12px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+    }
+    h3 {
+      font-size: 1.05rem;
+      margin: 22px 0 8px;
+    }
+    p { margin: 9px 0; }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code {
+      background: #f3f4f6;
+      border: 1px solid #e5e7eb;
+      border-radius: 5px;
+      padding: 1px 5px;
+      font-size: 0.95em;
+    }
+    pre {
+      background: #111827;
+      color: #f9fafb;
+      border-radius: 12px;
+      padding: 16px;
+      overflow-x: auto;
+      line-height: 1.4;
+      font-size: 0.92rem;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 14px 0 20px;
+      font-size: 0.95rem;
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: var(--light); }
+    ul, ol { padding-left: 23px; }
+    li { margin: 4px 0; }
+    .subtitle {
+      color: var(--muted);
+      font-size: 1.05rem;
+      margin-bottom: 22px;
+    }
+    .card {
+      border: 1px solid var(--line);
+      background: var(--light);
+      border-radius: 14px;
+      padding: 16px 18px;
+      margin: 16px 0;
+    }
+    .blue { background: var(--blue-bg); border-color: #bfdbfe; }
+    .green { background: var(--green-bg); border-color: #bbf7d0; }
+    .amber { background: var(--amber-bg); border-color: #fde68a; }
+    .red { background: var(--red-bg); border-color: #fecaca; }
+    .purple { background: var(--purple-bg); border-color: #ddd6fe; }
+    .tag {
+      display: inline-block;
+      font-size: 0.78rem;
+      font-weight: 650;
+      color: #374151;
+      background: #e5e7eb;
+      border-radius: 999px;
+      padding: 3px 9px;
+      margin: 0 4px 6px 0;
+    }
+    .nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 18px 0 26px;
+    }
+    .nav a {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 6px 10px;
+      background: #fff;
+      font-size: 0.9rem;
+    }
+    .one-line {
+      font-size: 1.12rem;
+      font-weight: 650;
+    }
+    .equation {
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin: 14px 0;
+      overflow-x: auto;
+    }
+    .small {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin: 16px 0;
+      align-items: stretch;
+    }
+    .flow div {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+      font-size: 0.92rem;
+    }
+    .arrow::after {
+      content: "→";
+      display: block;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+    @media (max-width: 760px) {
+      .flow { grid-template-columns: 1fr; }
+      .arrow::after { content: "↓"; }
+    }
+  </style>
+</head>
+
+<body>
+<div class="container">
+
+  <h1>Compatibility-Preserving Steering for In-Context Concept Redefinition</h1>
+  <p class="subtitle">
+    A short project explainer for an NLP/interpretability audience.
+    It presents the experiment in concrete terms and keeps the heavier theory language in the background.
+  </p>
+
+  <div class="card blue">
+    <p class="one-line">One-sentence version</p>
+    <p>
+      Can we steer a language model toward a contextually redefined concept
+      <strong>only when that redefinition is active</strong>, while preserving ordinary behavior elsewhere?
+    </p>
+  </div>
+
+  <div class="nav">
+    <a href="#motivation">Motivation</a>
+    <a href="#translation">Vocabulary translation</a>
+    <a href="#toy">Toy task</a>
+    <a href="#method">Method</a>
+    <a href="#metrics">Metrics</a>
+    <a href="#experiment">Experiment</a>
+    <a href="#whyhewitt">Fit with Hewitt lab</a>
+    <a href="#email">Short email</a>
+  </div>
+
+  <h2 id="motivation">1. Motivation</h2>
+
+  <p>
+    In-context learning can redefine concepts. For example, a prompt can say:
+  </p>
+
+  <pre>In this game, the word "dog" means cat.
+Question: A dog says meow. Is that expected?</pre>
+
+  <p>
+    A model may partially treat <code>dog</code> as <code>cat</code> inside this context.
+    This is useful for studying concept binding, model editing, steering, and controllability.
+  </p>
+
+  <p>
+    But there is a subtle problem:
+  </p>
+
+  <div class="card amber">
+    <p>
+      A good intervention should not simply push the representation of <code>dog</code> toward <code>cat</code> everywhere.
+      It should make that shift <strong>only in contexts where the redefinition is active</strong>.
+    </p>
+  </div>
+
+  <p>
+    So the central question is not only <em>can we steer?</em> It is:
+  </p>
+
+  <div class="card green">
+    <p class="one-line">
+      Can we steer selectively, achieving the target change while minimizing collateral damage?
+    </p>
+  </div>
+
+  <h2 id="translation">2. Vocabulary translation</h2>
+
+  <p>
+    The broader theory uses terms like “underdetermination” and “constructive compatibility.”
+    For a first conversation with an NLP researcher, it is clearer to foreground the experimental version:
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Theory term</th>
+        <th>NLP-facing phrase</th>
+        <th>Plain meaning</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>underdetermination</td>
+        <td><strong>underspecified context</strong> / ambiguous context</td>
+        <td>The context does not uniquely determine what the model should internally do next.</td>
+      </tr>
+      <tr>
+        <td>constructive compatibility</td>
+        <td><strong>compatibility-preserving steering</strong></td>
+        <td>Move the target concept in the desired direction without disrupting unrelated behavior.</td>
+      </tr>
+      <tr>
+        <td>rupture</td>
+        <td><strong>collateral damage</strong></td>
+        <td>The intervention damages non-target concepts, ordinary contexts, grammar, or control tasks.</td>
+      </tr>
+      <tr>
+        <td>invariant survival</td>
+        <td><strong>preserving non-target behavior</strong></td>
+        <td>Important behaviors stay stable after the intervention.</td>
+      </tr>
+      <tr>
+        <td>mirror</td>
+        <td><strong>hidden state / internal representation</strong></td>
+        <td>The model’s current internal representation at a layer and token position.</td>
+      </tr>
+      <tr>
+        <td>possibility</td>
+        <td><strong>candidate concept update</strong></td>
+        <td>A possible re-interpretation, continuation, or steering target.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="card">
+    <p><strong>Recommended framing:</strong> “selective steering for concept redefinition with low collateral damage.”</p>
+    <p>
+      This wording puts the empirical question first: when to steer, what to preserve,
+      and how to measure the tradeoff.
+    </p>
+    <p class="small">
+      The denser theory phrase “underdetermined mirror evolution by constructive compatibility”
+      can be saved for a theory appendix or follow-up discussion.
+    </p>
+  </div>
+
+  <h2 id="toy">3. Toy task: in-context concept redefinition</h2>
+
+  <p>
+    The toy setting is intentionally simple because it lets us measure success and side effects cleanly.
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Redefinition</th>
+        <th>Target effect</th>
+        <th>Non-target behavior to preserve</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>"dog" := "cat"</code></td>
+        <td>Inside the redefinition context, <code>dog</code> behaves more like <code>cat</code>.</td>
+        <td>Outside the context, ordinary <code>dog</code> and <code>cat</code> behavior remains intact.</td>
+      </tr>
+      <tr>
+        <td><code>"Paris" := "London"</code></td>
+        <td>Inside the context, questions about <code>Paris</code> follow London-like facts.</td>
+        <td>Ordinary geography facts outside the context are preserved.</td>
+      </tr>
+      <tr>
+        <td><code>"red" := "blue"</code></td>
+        <td>Inside the context, <code>red</code> maps to blue-like behavior.</td>
+        <td>Other color words and ordinary color knowledge are preserved.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    In this toy task, “underspecified” means the context creates two plausible interpretations:
+    the original lexical meaning and the temporary in-context meaning.
+  </p>
+
+  <div class="flow">
+    <div class="arrow">Prompt defines<br><code>dog := cat</code></div>
+    <div class="arrow">Model hidden state contains<br>old + new meanings</div>
+    <div class="arrow">Intervention decides<br>whether to steer</div>
+    <div class="arrow">Target concept shifts<br>inside context</div>
+    <div>Non-target behavior<br>should remain stable</div>
+  </div>
+
+  <h2 id="method">4. Method: gated steering</h2>
+
+  <p>
+    Standard steering applies the same vector everywhere:
+  </p>
+
+  <div class="equation">
+    \[
+      h' = h + s
+    \]
+  </div>
+
+  <p>
+    But concept redefinition is context-specific. The intervention should fire only when the current hidden state
+    indicates that the redefinition is active. So use a gate:
+  </p>
+
+  <div class="equation">
+    \[
+      h' = h + \sigma(h^\top v)s
+    \]
+  </div>
+
+  <p>
+    Interpretation:
+  </p>
+
+  <ul>
+    <li>\(s\) learns <strong>what change to make</strong>.</li>
+    <li>\(v\) learns <strong>when to apply that change</strong>.</li>
+    <li>\(\sigma(h^\top v)\) is the selectivity gate.</li>
+  </ul>
+
+  <div class="card purple">
+    <p class="one-line">Core hypothesis</p>
+    <p>
+      Gated steering should achieve similar target movement as ungated steering,
+      but with lower collateral damage on non-target contexts.
+    </p>
+  </div>
+
+  <h2 id="metrics">5. Metrics</h2>
+
+  <h3>5.1 Target effect</h3>
+
+  <p>
+    Does the redefined concept move toward the intended behavior?
+  </p>
+
+  <div class="equation">
+    \[
+      \text{TargetEffect}
+      =
+      \text{Score}_{\text{target}}(h')
+      -
+      \text{Score}_{\text{target}}(h)
+    \]
+  </div>
+
+  <p>
+    Example: after <code>"dog" := "cat"</code>, does the model answer more cat-like questions for <code>dog</code>
+    inside the redefinition context?
+  </p>
+
+  <h3>5.2 Collateral damage</h3>
+
+  <p>
+    Does the intervention harm unrelated behavior?
+  </p>
+
+  <div class="equation">
+    \[
+      \text{Damage}
+      =
+      \sum_i w_i
+      \max\{0, g_i(h)-g_i(h')\}
+    \]
+  </div>
+
+  <p>
+    Here \(g_i\) are probes or behavioral tests for non-target properties: ordinary word meaning,
+    grammar, factual consistency, unrelated concepts, and control tasks.
+  </p>
+
+  <h3>5.3 Selectivity</h3>
+
+  <p>
+    Does the gate fire only in redefinition contexts?
+  </p>
+
+  <div class="equation">
+    \[
+      \text{Selectivity}
+      =
+      \mathbb E[g(h)\mid \text{redefinition active}]
+      -
+      \mathbb E[g(h)\mid \text{ordinary context}]
+    \]
+  </div>
+
+  <p>
+    where \(g(h)=\sigma(h^\top v)\).
+  </p>
+
+  <h3>5.4 Tradeoff score</h3>
+
+  <p>
+    The practical objective is:
+  </p>
+
+  <div class="equation">
+    \[
+      \text{UsefulSteering}
+      =
+      \text{TargetEffect}
+      -
+      \lambda \text{Damage}
+      -
+      \mu \text{InterventionSize}
+    \]
+  </div>
+
+  <p>
+    This is the NLP-facing version of “constructive compatibility.”
+  </p>
+
+  <h2 id="experiment">6. Minimal experiment</h2>
+
+  <ol>
+    <li>
+      <strong>Create redefinition prompts.</strong><br>
+      Examples: <code>dog := cat</code>, <code>Paris := London</code>, <code>red := blue</code>.
+    </li>
+    <li>
+      <strong>Collect hidden states.</strong><br>
+      Record residual-stream states at selected layers and positions.
+    </li>
+    <li>
+      <strong>Train or estimate concept directions.</strong><br>
+      Learn a target steering vector \(s\) for the redefinition.
+    </li>
+    <li>
+      <strong>Train a gate.</strong><br>
+      Learn \(v\) so the intervention fires in redefinition contexts but not ordinary contexts.
+    </li>
+    <li>
+      <strong>Compare three conditions.</strong>
+      <ol>
+        <li>Prompt-only redefinition.</li>
+        <li>Ungated steering: \(h'=h+s\).</li>
+        <li>Gated steering: \(h'=h+\sigma(h^\top v)s\).</li>
+      </ol>
+    </li>
+    <li>
+      <strong>Evaluate target effect, collateral damage, and selectivity.</strong>
+    </li>
+  </ol>
+
+  <div class="card green">
+    <p class="one-line">Expected result</p>
+    <p>
+      Gated steering should sit on a better target-effect / collateral-damage frontier:
+      similar target movement, less damage.
+    </p>
+  </div>
+
+  <h2>7. Baselines and controls</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Concern</th>
+        <th>Control</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>The probe is doing all the work.</td>
+        <td>Use control tasks and compare against random labels / lexical controls.</td>
+      </tr>
+      <tr>
+        <td>The intervention is just lexical replacement.</td>
+        <td>Condition on token identity; test whether the vector decomposes into a few token embeddings.</td>
+      </tr>
+      <tr>
+        <td>Ungated steering is already enough.</td>
+        <td>Compare target effect at matched collateral damage.</td>
+      </tr>
+      <tr>
+        <td>The gate fires everywhere.</td>
+        <td>Measure gate values on ordinary contexts and unrelated redefinition contexts.</td>
+      </tr>
+      <tr>
+        <td>The result is concept-specific.</td>
+        <td>Run several redefinition pairs across animals, places, colors, professions, and abstract labels.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2 id="whyhewitt">8. Why this could fit Prof. Hewitt’s lab</h2>
+
+  <p>
+    This project naturally connects to several themes in Prof. Hewitt’s work:
+  </p>
+
+  <ul>
+    <li>
+      <strong>Probing and representation geometry.</strong>
+      Structural probes ask whether linguistic structure is encoded in representation geometry.
+      <a href="https://aclanthology.org/N19-1419/">Structural Probe paper</a>.
+    </li>
+    <li>
+      <strong>Probe controls.</strong>
+      The project needs careful controls so target-effect measurements are not just probe artifacts.
+      <a href="https://aclanthology.org/D19-1275/">Control Tasks paper</a>.
+    </li>
+    <li>
+      <strong>Usable information beyond baselines.</strong>
+      The project asks whether the gated intervention adds usable context-specific control beyond lexical identity and prompt-only behavior.
+      <a href="https://aclanthology.org/2021.emnlp-main.122/">Conditional Probing paper</a>.
+    </li>
+    <li>
+      <strong>Precise control of neural language systems.</strong>
+      The project is directly about steering only when appropriate, not globally.
+      <a href="https://www.cs.columbia.edu/~johnhew/">John Hewitt homepage</a>.
+    </li>
+  </ul>
+
+  <h2>9. Scope boundaries</h2>
+
+  <div class="card red">
+    <ul>
+      <li>This is a narrow, testable intervention study, not a broad theory-of-everything claim.</li>
+      <li>The goal is not just to probe for a concept, but to test whether a gate improves context-specific steering.</li>
+      <li>The intervention is local and context-conditioned, rather than a form of global model editing.</li>
+      <li>The value should come from clear success and failure criteria, not from terminology alone.</li>
+    </ul>
+  </div>
+
+  <p>
+    The specific empirical claim is small:
+  </p>
+
+  <div class="card blue">
+    <p class="one-line">
+      For in-context concept redefinition, gated steering can improve the target-effect / collateral-damage frontier.
+    </p>
+  </div>
+
+  <h2>10. Optional theory translation</h2>
+
+  <p>
+    The broader theory language is:
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>NLP experiment</th>
+        <th>Theory translation</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Hidden state \(h\)</td>
+        <td>Mirror state \(M_t\)</td>
+      </tr>
+      <tr>
+        <td>Contextual redefinition</td>
+        <td>Evidence creates multiple admissible internal updates</td>
+      </tr>
+      <tr>
+        <td>Gate \(g(h)\)</td>
+        <td>Compatibility detector</td>
+      </tr>
+      <tr>
+        <td>Steering vector \(s\)</td>
+        <td>Expansion direction</td>
+      </tr>
+      <tr>
+        <td>Non-target behavior preservation</td>
+        <td>Invariant survival</td>
+      </tr>
+      <tr>
+        <td>Low collateral damage</td>
+        <td>Low rupture</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    In this translation, the gated intervention learns:
+  </p>
+
+  <div class="equation">
+    \[
+      \text{when to update} \quad + \quad \text{what update to apply}
+    \]
+  </div>
+
+  <p>
+    That is the concrete NLP version of a compatibility-preserving reflection.
+  </p>
+
+  <h2 id="email">11. Email draft</h2>
+
+  <div class="card">
+    <p><strong>Subject:</strong> Project idea: gated steering for in-context concept redefinition</p>
+
+    <p>Dear Professor Hewitt,</p>
+
+    <p>
+      I hope you are doing well. I am a Columbia CS student interested in LLM internals,
+      probing, and controllable representation interventions. I have been developing a small
+      project idea on context-specific concept redefinition.
+    </p>
+
+    <p>
+      The core question is whether an intervention can steer a model toward a redefined concept
+      only when that redefinition is active, while preserving ordinary behavior elsewhere. As a toy
+      setting, I am considering prompts such as <code>"dog" := "cat"</code>, where the model should use
+      the temporary meaning in context but preserve the original meaning outside that context.
+    </p>
+
+    <p>
+      I have attached a short explainer. The proposed experiment compares prompt-only redefinition,
+      ungated steering, and gated steering \(h'=h+\sigma(h^\top v)s\), using target effect,
+      collateral damage, and gate selectivity as evaluation metrics.
+    </p>
+
+    <p>
+      I would be very grateful for 20–30 minutes of feedback, especially on whether the probing setup
+      and control conditions are sound.
+    </p>
+
+    <p>
+      Best,<br>
+      Tiantian (Crystal) Zhang
+    </p>
+  </div>
+
+  <p class="small">
+    Suggested attachment filename:
+    <code>compatibility_preserving_steering_explainer_corrected.html</code>
+  </p>
+
+</div>
+</body>
+</html>
