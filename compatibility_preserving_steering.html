@@ -645,48 +645,6 @@ Question: A dog says meow. Is that expected?</pre>
     That is the concrete NLP version of a compatibility-preserving reflection.
   </p>
 
-  <h2 id="email">11. Email draft</h2>
-
-  <div class="card">
-    <p><strong>Subject:</strong> Project idea: gated steering for in-context concept redefinition</p>
-
-    <p>Dear Professor Hewitt,</p>
-
-    <p>
-      I hope you are doing well. I am a Columbia CS student interested in LLM internals,
-      probing, and controllable representation interventions. I have been developing a small
-      project idea on context-specific concept redefinition.
-    </p>
-
-    <p>
-      The core question is whether an intervention can steer a model toward a redefined concept
-      only when that redefinition is active, while preserving ordinary behavior elsewhere. As a toy
-      setting, I am considering prompts such as <code>"dog" := "cat"</code>, where the model should use
-      the temporary meaning in context but preserve the original meaning outside that context.
-    </p>
-
-    <p>
-      I have attached a short explainer. The proposed experiment compares prompt-only redefinition,
-      ungated steering, and gated steering \(h'=h+\sigma(h^\top v)s\), using target effect,
-      collateral damage, and gate selectivity as evaluation metrics.
-    </p>
-
-    <p>
-      I would be very grateful for 20–30 minutes of feedback, especially on whether the probing setup
-      and control conditions are sound.
-    </p>
-
-    <p>
-      Best,<br>
-      Tiantian (Crystal) Zhang
-    </p>
-  </div>
-
-  <p class="small">
-    Suggested attachment filename:
-    <code>compatibility_preserving_steering_explainer_corrected.html</code>
-  </p>
-
 </div>
 </body>
 </html>
