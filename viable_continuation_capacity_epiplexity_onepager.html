@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Viable Continuation Capacity: A Local Analogue of Epiplexity</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --ink: #111827;
+      --muted: #4b5563;
+      --line: #e5e7eb;
+      --soft: #f9fafb;
+      --blue: #1d4ed8;
+      --blue-soft: #eff6ff;
+      --green-soft: #ecfdf5;
+      --amber-soft: #fffbeb;
+      --red-soft: #fef2f2;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: white;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.48;
+    }
+
+    .page {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 36px 24px 54px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 2rem;
+      line-height: 1.13;
+      letter-spacing: -0.03em;
+    }
+
+    .subtitle {
+      margin: 0 0 22px;
+      color: var(--muted);
+      font-size: 1.06rem;
+    }
+
+    h2 {
+      margin: 28px 0 10px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+      font-size: 1.17rem;
+    }
+
+    h3 {
+      margin: 18px 0 6px;
+      font-size: 1rem;
+    }
+
+    p { margin: 8px 0; }
+
+    a {
+      color: var(--blue);
+      text-decoration: none;
+    }
+
+    a:hover { text-decoration: underline; }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin: 14px 0;
+      background: var(--soft);
+    }
+
+    .blue { background: var(--blue-soft); border-color: #bfdbfe; }
+    .green { background: var(--green-soft); border-color: #bbf7d0; }
+    .amber { background: var(--amber-soft); border-color: #fde68a; }
+    .red { background: var(--red-soft); border-color: #fecaca; }
+
+    .big {
+      font-weight: 700;
+      font-size: 1.12rem;
+    }
+
+    .formula {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      background: #111827;
+      color: #f9fafb;
+      padding: 12px 14px;
+      border-radius: 12px;
+      overflow-x: auto;
+      white-space: pre;
+      margin: 12px 0;
+      font-size: 0.96rem;
+    }
+
+    .inline-formula {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      background: #f3f4f6;
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      padding: 1px 5px;
+    }
+
+    ul, ol { padding-left: 22px; margin: 8px 0; }
+    li { margin: 4px 0; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+      font-size: 0.95rem;
+    }
+
+    th, td {
+      border: 1px solid var(--line);
+      padding: 9px 10px;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    th { background: var(--soft); }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .footer {
+      margin-top: 28px;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 740px) {
+      .two-col { grid-template-columns: 1fr; }
+      h1 { font-size: 1.65rem; }
+      .page { padding: 28px 18px 44px; }
+    }
+
+    @media print {
+      body { font-size: 10.5pt; }
+      .page { max-width: none; padding: 0.35in; }
+      h1 { font-size: 20pt; }
+      h2 { page-break-after: avoid; }
+      .card, .formula { break-inside: avoid; }
+      a { color: black; text-decoration: none; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <h1>Viable Continuation Capacity</h1>
+    <p class="subtitle">A local analogue of epiplexity for counterfactual internal updates</p>
+
+    <div class="card blue">
+      <p class="big">Question</p>
+      <p>
+        Epiplexity asks what structural information is accessible to a computationally bounded learner.
+        Can we define a local, state-conditioned analogue: given an internal state <span class="inline-formula">M</span>,
+        how many distinct coherent continuation modes does it make reachable under finite budget?
+      </p>
+    </div>
+
+    <h2>1. Connection to Epiplexity</h2>
+    <p>
+      The <a href="https://arxiv.org/abs/2601.03220" target="_blank" rel="noopener">Epiplexity</a>
+      paper moves beyond raw Shannon/Kolmogorov information toward structural information accessible to bounded learners.
+      This note asks a local version of that question: not “how much structure is in a dataset?”, but
+      “how much coherent continuation structure is supported by this internal state?”
+    </p>
+
+    <div class="two-col">
+      <div class="card">
+        <p class="big">Epiplexity</p>
+        <p>Structural information in data for a bounded learner.</p>
+      </div>
+      <div class="card">
+        <p class="big">Viable continuation capacity</p>
+        <p>Coherent continuation modes reachable from an internal state under finite rollout.</p>
+      </div>
+    </div>
+
+    <h2>2. Definition</h2>
+    <table>
+      <tr>
+        <th>Symbol</th>
+        <th>Meaning</th>
+      </tr>
+      <tr>
+        <td><span class="inline-formula">M</span></td>
+        <td>Current internal state, e.g. a hidden state of a language model.</td>
+      </tr>
+      <tr>
+        <td><span class="inline-formula">B</span></td>
+        <td>Finite compute / sampling / token budget.</td>
+      </tr>
+      <tr>
+        <td><span class="inline-formula">T</span></td>
+        <td>Finite rollout horizon.</td>
+      </tr>
+      <tr>
+        <td><span class="inline-formula">γ</span></td>
+        <td>A sampled continuation path from <span class="inline-formula">M</span>.</td>
+      </tr>
+      <tr>
+        <td><span class="inline-formula">V(γ)</span></td>
+        <td>Viability verifier: whether the continuation is coherent / valid for the task.</td>
+      </tr>
+      <tr>
+        <td><span class="inline-formula">ψ(γ)</span></td>
+        <td>Semantic mode map: the continuation’s outcome type among viable paths.</td>
+      </tr>
+    </table>
+
+    <p>
+      Define viable path entropy, or mirror horizon, by:
+    </p>
+
+    <div class="formula">H_{B,T}(M) = log Pr[V(γ)=1] + H( ψ(γ) | V(γ)=1 )</div>
+
+    <p>
+      This is high when two things are true:
+    </p>
+
+    <ol>
+      <li>continuations are likely to remain viable;</li>
+      <li>among viable continuations, many distinct semantic modes remain reachable.</li>
+    </ol>
+
+    <div class="card amber">
+      <p>
+        This intentionally differs from raw entropy: random branching does not count unless it survives the viability filter.
+      </p>
+    </div>
+
+    <h2>3. Candidate update</h2>
+    <p>
+      Let <span class="inline-formula">p</span> be a candidate update, prompt edit, steering intervention,
+      retrieved document, or concept redefinition. Suppose integrating it induces a counterfactual internal state
+      <span class="inline-formula">M^(p)</span>.
+    </p>
+
+    <p>
+      Define the update’s value as horizon gain:
+    </p>
+
+    <div class="formula">CC_{B,T}(M,p) = H_{B,T}(M^(p)) - H_{B,T}(M)</div>
+
+    <p>
+      Informally:
+    </p>
+
+    <div class="card green">
+      <p class="big">A useful update is one that increases viable continuation capacity.</p>
+      <p>
+        It should not merely be similar, novel, high-probability, high-entropy, or far in hidden-state space.
+        It should open more coherent structured continuations.
+      </p>
+    </div>
+
+    <h2>4. Concrete example: concept redefinition</h2>
+    <p>
+      Consider an in-context redefinition:
+    </p>
+
+    <div class="formula">In this context, "dog" means cat.</div>
+
+    <p>
+      A good update should:
+    </p>
+
+    <ul>
+      <li>make <span class="inline-formula">dog</span> behave like <span class="inline-formula">cat</span> inside the redefinition context;</li>
+      <li>preserve ordinary <span class="inline-formula">dog</span> / <span class="inline-formula">cat</span> behavior outside that context;</li>
+      <li>preserve unrelated concepts and grammatical coherence.</li>
+    </ul>
+
+    <p>
+      Compare:
+    </p>
+
+    <table>
+      <tr>
+        <th>Condition</th>
+        <th>Intervention</th>
+        <th>Expected issue / benefit</th>
+      </tr>
+      <tr>
+        <td>Prompt-only</td>
+        <td>No hidden-state intervention</td>
+        <td>May partially redefine the concept but inconsistently.</td>
+      </tr>
+      <tr>
+        <td>Ungated steering</td>
+        <td><span class="inline-formula">h' = h + s</span></td>
+        <td>Can move the target concept, but may damage ordinary contexts.</td>
+      </tr>
+      <tr>
+        <td>Gated steering</td>
+        <td><span class="inline-formula">h' = h + sigmoid(h^T v)s</span></td>
+        <td>Should apply the shift selectively when the redefinition is active.</td>
+      </tr>
+    </table>
+
+    <div class="card blue">
+      <p class="big">Prediction</p>
+      <p>
+        At matched target effect, gated steering should increase
+        <span class="inline-formula">H_{B,T}</span> more than ungated steering, because it should preserve more viable continuation modes with less collateral damage.
+      </p>
+    </div>
+
+    <h2>5. Concrete feedback question</h2>
+    <p>
+      Is viable continuation capacity a meaningful local analogue of epiplexity,
+      or does the epiplexity framework already suggest a cleaner formulation for this object?
+    </p>
+
+    <p>
+      More specifically:
+    </p>
+    <ul>
+      <li>Is the viability-filtered entropy form well-motivated?</li>
+      <li>Should <span class="inline-formula">ψ</span> be learned, hand-specified, or derived from semantic representation geometry?</li>
+      <li>Is concept redefinition a reasonable minimal experiment for estimating this quantity?</li>
+    </ul>
+
+    <div class="footer">
+      <p>
+        Tiantian (Crystal) Zhang · Columbia University
+      </p>
+      <p>
+        Related links:
+        <a href="https://arxiv.org/abs/2601.03220" target="_blank" rel="noopener">Epiplexity paper</a> ·
+        <a href="https://cims.nyu.edu/~andrewgw/" target="_blank" rel="noopener">Andrew Gordon Wilson homepage</a>
+      </p>
+    </div>
+  </main>
+</body>
+</html>
