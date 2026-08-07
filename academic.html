@@ -211,11 +211,10 @@
           <h3>Bridge Graphical Models: Markov Compression as a Design Principle for Continuous-Time Generative Modeling</h3>
           <p class="authors">Tiantian Zhang</p>
           <p>
-            A path-space framework for diffusion models, flow matching, rectified flow, Schrödinger
-            bridges, and field-based samplers. The central object is the Markovization gap: the unexplained
-            <code>L2</code> velocity action left after projecting endpoint-conditioned bridge velocities onto
-            Markov-measurable vector fields. The gap gives a pre-training diagnostic for whether a chosen
-            coupling and bridge law can be decoded by a non-anticipative Markov sampler.
+            A path-space framework for diffusion models, flow matching, rectified flows, Schrödinger bridges, and field-based samplers. 
+            The central object is the **Markovization gap**: the irreducible <code>L_2</code> regression error incurred when a bridge-specific local
+            target, conditioned on endpoint information, is compressed into a sampler-visible Markov representation. The gap provides a 
+            pre-training diagnostic of the fixed-budget difficulty of decoding a chosen bridge design with a non-anticipative sampler.
           </p>
           <div class="link-row">
             <a class="text-link" href="https://openreview.net/forum?id=zu4l4sQPdU#discussion" target="_blank" rel="noopener">open review link</a>
